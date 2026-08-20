@@ -66,7 +66,10 @@ export default {
     if (path === "/api/data" && request.method === "POST") return handlePostData(request, env);
     if (path === "/api/upload" && request.method === "POST") return handleUpload(request, env);
     if (path.startsWith("/uploads/") && request.method === "GET") {
-      return handleServeUpload(path.slice("/uploads/".length), env);
+      // url.pathname stays percent-encoded (e.g. Thai characters, spaces), but the R2 key
+      // was stored as the raw decoded string in handleUpload() — decode here to match it.
+      const key = decodeURIComponent(path.slice("/uploads/".length));
+      return handleServeUpload(key, env);
     }
 
     // everything else (index.html, thai-words.js, ...) is served from public/ via the ASSETS binding
