@@ -5,6 +5,7 @@ param(
 
 $dataFile = Join-Path $Root "data.json"
 $uploadsDir = Join-Path $Root "uploads"
+$staticRoot = Join-Path $Root "public"
 if (-not (Test-Path $uploadsDir)) { New-Item -ItemType Directory -Path $uploadsDir | Out-Null }
 
 $mimeMap = @{
@@ -153,8 +154,10 @@ while ($true) {
         }
         else {
             $relative = $req.Path.TrimStart("/")
-            $filePath = Join-Path $Root $relative
-            $fullRoot = (Resolve-Path $Root).Path
+            $isUpload = $relative.StartsWith("uploads/")
+            $base = if ($isUpload) { $Root } else { $staticRoot }
+            $filePath = Join-Path $base $relative
+            $fullRoot = (Resolve-Path $base).Path
             $resolved = try { (Resolve-Path $filePath -ErrorAction Stop).Path } catch { $null }
 
             if ($resolved -and $resolved.StartsWith($fullRoot) -and (Test-Path $filePath -PathType Leaf)) {

@@ -1,0 +1,14 @@
+name = "novel-helper"
+main = "src/index.js"
+compatibility_date = "2025-06-01"
+
+[assets]
+directory = "./public"
+binding = "ASSETS"
+
+# After the first deploy with this file, add these two bindings from the
+# Cloudflare dashboard (Workers & Pages > novel-helper > Settings > Variables and secrets,
+# or the Bindings tab) — this file intentionally does not hardcode the D1/R2 resource IDs:
+#
+#   D1 database  ->  variable name: DB       ->  novel-helper-db
+#   R2 bucket    ->  variable name: UPLOADS  ->  novel-helper-uploads
