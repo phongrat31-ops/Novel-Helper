@@ -1,0 +1,1805 @@
+<title>ผู้ช่วยเขียนนิยาย</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<style>
+  :root{
+    --bg:#f6f3ee; --panel:#ffffff; --ink:#2b2620; --ink-soft:#6b6255;
+    --line:#e4ddd0; --accent:#8a5a3b; --accent-ink:#ffffff;
+    --chip:#efe7d8; --chip-on:#8a5a3b; --chip-on-ink:#fff;
+    --danger:#b3452f; --ok:#4d8c5a; --warn:#c98a2c;
+    --radius:12px;
+    font-family:-apple-system,"Segoe UI","Noto Sans Thai",system-ui,sans-serif;
+  }
+  @media (prefers-color-scheme: dark){
+    :root{
+      --bg:#1c1a17; --panel:#262320; --ink:#eee7db; --ink-soft:#a89f8f;
+      --line:#3a352e; --accent:#d99a6c; --accent-ink:#1c1a17;
+      --chip:#332e27; --chip-on:#d99a6c; --chip-on-ink:#1c1a17;
+      --danger:#e07a5f; --ok:#7fbf8f; --warn:#e0b35f;
+    }
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--bg);color:var(--ink);}
+  input,textarea,select,button{font-family:inherit;color:inherit;}
+  .serif{font-family:"Sarabun","Noto Serif Thai",Georgia,serif;}
+  h1,h2,h3{margin:0 0 8px;}
+  a{color:var(--accent);}
+  button{cursor:pointer;}
+
+  #app{display:flex;min-height:100vh;}
+
+  /* ---- side nav (desktop) ---- */
+  #nav{
+    width:210px;flex:0 0 210px;background:var(--panel);border-right:1px solid var(--line);
+    padding:16px 10px;display:flex;flex-direction:column;gap:4px;position:sticky;top:0;height:100vh;
+  }
+  #nav .brand{padding:6px 10px 16px;font-weight:700;font-size:15px;}
+  #nav .brand small{display:block;font-weight:400;color:var(--ink-soft);font-size:12px;margin-top:2px;}
+  .navbtn{
+    display:flex;align-items:center;gap:10px;padding:10px 12px;border:none;background:transparent;
+    border-radius:var(--radius);text-align:left;font-size:14px;color:var(--ink);
+  }
+  .navbtn .ic{font-size:16px;width:20px;text-align:center;}
+  .navbtn.active{background:var(--accent);color:var(--accent-ink);}
+  #nav .foot{margin-top:auto;padding:8px 10px;font-size:12px;color:var(--ink-soft);display:flex;flex-direction:column;gap:6px;}
+  #syncdot{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--ink-soft);margin-right:6px;}
+  #syncdot.on{background:var(--ok);} #syncdot.off{background:var(--warn);}
+  #nav .footbtns{display:flex;gap:6px;}
+  #nav .footbtns button{flex:1;padding:6px;border:1px solid var(--line);border-radius:8px;background:var(--panel);font-size:12px;color:var(--ink);}
+
+  /* ---- main ---- */
+  #main{flex:1;min-width:0;padding:22px 26px 90px;}
+  .container{max-width:900px;margin:0 auto;}
+
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:16px;margin-bottom:14px;}
+  .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;}
+  .col{display:flex;flex-direction:column;gap:6px;}
+  .grow{flex:1;min-width:0;}
+  label{font-size:12px;color:var(--ink-soft);}
+  input[type=text],input[type=search],textarea,select{
+    width:100%;padding:9px 10px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--ink);font-size:14px;
+  }
+  textarea{resize:vertical;line-height:1.6;}
+  .btn{padding:8px 14px;border:1px solid var(--line);border-radius:8px;background:var(--panel);font-size:13px;}
+  .btn.primary{background:var(--accent);color:var(--accent-ink);border-color:var(--accent);}
+  .btn.danger{color:var(--danger);border-color:var(--danger);background:transparent;}
+  .btn.small{padding:4px 10px;font-size:12px;}
+  .btn.ghost{background:transparent;}
+
+  .chip{display:inline-flex;align-items:center;padding:5px 11px;border-radius:999px;background:var(--chip);color:var(--ink);font-size:12.5px;border:none;margin:2px 4px 2px 0;}
+  .chip.on{background:var(--chip-on);color:var(--chip-on-ink);}
+  .badge{display:inline-block;padding:2px 9px;border-radius:999px;font-size:11px;font-weight:600;}
+  .badge.open{background:#c98a2c33;color:var(--warn);}
+  .badge.resolved{background:#4d8c5a33;color:var(--ok);}
+  .badge.low{background:#b3452f33;color:var(--danger);}
+
+  .filebtn{display:inline-flex;align-items:center;gap:4px;padding:4px 10px;border:1px solid var(--line);border-radius:8px;background:var(--panel);font-size:12px;margin:0;}
+  .filebtn input{display:none;}
+  .imggrid{display:flex;flex-wrap:wrap;gap:8px;}
+  .imgthumb{position:relative;width:90px;height:90px;}
+  .imgthumb img{width:100%;height:100%;object-fit:cover;border-radius:8px;border:1px solid var(--line);display:block;}
+  .imgthumb .imgdel{position:absolute;top:2px;right:2px;background:var(--panel);border:1px solid var(--line);border-radius:50%;width:20px;height:20px;padding:0;font-size:11px;line-height:1;}
+  .portrait{width:96px;height:96px;border-radius:10px;border:1px solid var(--line);object-fit:cover;display:block;}
+  .portrait-empty{width:96px;height:96px;border-radius:10px;border:1px dashed var(--line);display:flex;align-items:center;justify-content:center;color:var(--ink-soft);font-size:11px;text-align:center;padding:4px;}
+
+  .list{display:flex;flex-direction:column;gap:2px;}
+  .list .item{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:9px 10px;border-radius:8px;}
+  .list .item:hover{background:var(--bg);}
+  .list .item.active{background:var(--chip-on);color:var(--chip-on-ink);}
+  .list .item .t{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;cursor:pointer;}
+  .muted{color:var(--ink-soft);font-size:12.5px;}
+  .two-col{display:grid;grid-template-columns:230px 1fr;gap:16px;align-items:start;}
+  .stat{display:flex;flex-direction:column;gap:2px;padding:14px;background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);}
+  .stat b{font-size:22px;}
+  .stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:10px;margin-bottom:14px;}
+  hr{border:none;border-top:1px solid var(--line);margin:14px 0;}
+  .empty{color:var(--ink-soft);font-size:13px;padding:14px 4px;}
+  .relrow{display:grid;grid-template-columns:1fr 1fr 1fr 1.3fr auto;gap:6px;margin-bottom:6px;align-items:center;}
+  .relrow select,.relrow input{font-size:13px;padding:7px 8px;}
+
+  .novelgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:14px;}
+  .novelcard{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;display:flex;flex-direction:column;}
+  .novelcard .cover{aspect-ratio:3/4;background:var(--bg);cursor:pointer;overflow:hidden;}
+  .novelcard .cover img{width:100%;height:100%;object-fit:cover;display:block;}
+  .cover-empty{width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:var(--ink-soft);font-size:12px;text-align:center;}
+  .novelcard-body{padding:10px 12px 12px;}
+  .novelcard-title{font-weight:700;font-size:14px;cursor:pointer;margin-bottom:4px;}
+  .cover-thumb{width:96px;height:128px;object-fit:cover;border-radius:8px;border:1px solid var(--line);display:block;}
+  .cover-thumb-empty{width:96px;height:128px;border-radius:8px;border:1px dashed var(--line);display:flex;align-items:center;justify-content:center;color:var(--ink-soft);font-size:11px;text-align:center;padding:4px;}
+  .subtab{padding:8px 14px;border:1px solid var(--line);border-radius:8px;background:var(--panel);font-size:13px;}
+  .subtab.active{background:var(--accent);color:var(--accent-ink);border-color:var(--accent);}
+  .sc-text{white-space:pre-wrap;line-height:1.9;}
+  .sc-flag{background:#b3452f2e;color:var(--danger);border-bottom:2px solid var(--danger);border-radius:2px;cursor:pointer;}
+  .sc-flag:hover{background:#b3452f4a;}
+  .sc-fixed{background:#4d8c5a2e;color:var(--ok);border-bottom:2px solid var(--ok);border-radius:2px;}
+  #scPopup{position:fixed;z-index:60;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:12px;box-shadow:0 8px 28px rgba(0,0,0,.3);width:260px;font-size:13px;}
+  #scPopup .sugg{display:inline-block;margin:3px 5px 0 0;padding:5px 11px;border-radius:999px;background:var(--chip);cursor:pointer;font-size:12.5px;border:none;color:var(--ink);}
+  #scPopup .sugg:hover{background:var(--chip-on);color:var(--chip-on-ink);}
+
+  #bottomnav{display:none;}
+
+  @media (max-width:820px){
+    #nav{display:none;}
+    #main{padding:14px 12px 78px;}
+    .two-col{grid-template-columns:1fr;}
+    #bottomnav{
+      display:flex;position:fixed;bottom:0;left:0;right:0;background:var(--panel);
+      border-top:1px solid var(--line);z-index:20;padding:4px 2px calc(4px + env(safe-area-inset-bottom));
+    }
+    #bottomnav button{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;background:none;border:none;padding:6px 2px;font-size:10.5px;color:var(--ink-soft);border-radius:8px;}
+    #bottomnav button.active{color:var(--accent);}
+    #bottomnav .ic{font-size:18px;}
+    .relrow{grid-template-columns:1fr;}
+  }
+</style>
+
+<div id="app">
+  <nav id="nav"></nav>
+  <main id="main"><div class="container" id="view"></div></main>
+</div>
+<nav id="bottomnav"></nav>
+
+<script src="thai-words.js"></script>
+<script>
+"use strict";
+
+/* ---------------- data model ---------------- */
+function uid(){
+  if (window.crypto && crypto.randomUUID) return crypto.randomUUID();
+  return 'id-' + Date.now().toString(36) + '-' + Math.random().toString(36).slice(2,10);
+}
+function esc(s){
+  return String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+}
+function nl2br(s){ return esc(s).replace(/\n/g,"<br>"); }
+function debounce(fn, ms){ let t; return (...a) => { clearTimeout(t); t = setTimeout(()=>fn(...a), ms); }; }
+function fmtTime(ts){
+  if (!ts) return "-";
+  const d = new Date(ts);
+  return d.toLocaleString("th-TH",{dateStyle:"medium",timeStyle:"short"});
+}
+function fileIcon(type){
+  if (type==="pdf") return "📕";
+  if (type==="docx") return "📘";
+  if (type==="xlsx"||type==="xls") return "📗";
+  return "📄";
+}
+
+/* ---------------- file upload (images / original documents) ---------------- */
+async function uploadFile(file){
+  const res = await fetch("/api/upload", {
+    method:"POST",
+    headers:{"X-File-Name": encodeURIComponent(file.name)},
+    body: file
+  });
+  if (!res.ok) throw new Error("อัปโหลดไม่สำเร็จ (เซิร์ฟเวอร์ไม่ตอบสนอง)");
+  return await res.json();
+}
+
+/* ---------------- minimal zip reader (for .docx / .xlsx, both are zip+xml) ---------------- */
+async function readZipEntries(arrayBuffer){
+  if (!window.DecompressionStream) throw new Error("เบราว์เซอร์นี้ไม่รองรับการอ่านไฟล์ประเภทนี้ กรุณาใช้ Chrome หรือ Edge เวอร์ชันล่าสุด");
+  const bytes = new Uint8Array(arrayBuffer);
+  const view = new DataView(arrayBuffer);
+  const maxBack = Math.min(bytes.length, 65557);
+  let eocd = -1;
+  for (let i = bytes.length - 22; i >= bytes.length - maxBack && i >= 0; i--){
+    if (view.getUint32(i, true) === 0x06054b50){ eocd = i; break; }
+  }
+  if (eocd < 0) throw new Error("ไม่ใช่ไฟล์ที่รองรับ (โครงสร้างไฟล์ไม่ถูกต้อง)");
+  const entryCount = view.getUint16(eocd+10, true);
+  let cdOffset = view.getUint32(eocd+16, true);
+  const central = [];
+  for (let i=0;i<entryCount;i++){
+    if (view.getUint32(cdOffset, true) !== 0x02014b50) break;
+    const compMethod = view.getUint16(cdOffset+10, true);
+    const compSize = view.getUint32(cdOffset+20, true);
+    const nameLen = view.getUint16(cdOffset+28, true);
+    const extraLen = view.getUint16(cdOffset+30, true);
+    const commentLen = view.getUint16(cdOffset+32, true);
+    const localOffset = view.getUint32(cdOffset+42, true);
+    const name = new TextDecoder("utf-8").decode(bytes.subarray(cdOffset+46, cdOffset+46+nameLen));
+    central.push({name, compMethod, compSize, localOffset});
+    cdOffset += 46 + nameLen + extraLen + commentLen;
+  }
+  const files = new Map();
+  for (const meta of central){
+    const lh = meta.localOffset;
+    if (view.getUint32(lh, true) !== 0x04034b50) continue;
+    const lNameLen = view.getUint16(lh+26, true);
+    const lExtraLen = view.getUint16(lh+28, true);
+    const dataStart = lh + 30 + lNameLen + lExtraLen;
+    const compData = bytes.subarray(dataStart, dataStart + meta.compSize);
+    let outBytes;
+    if (meta.compMethod === 0){
+      outBytes = compData;
+    } else if (meta.compMethod === 8){
+      const ds = new DecompressionStream("deflate-raw");
+      const writer = ds.writable.getWriter();
+      writer.write(compData); writer.close();
+      outBytes = new Uint8Array(await new Response(ds.readable).arrayBuffer());
+    } else {
+      continue;
+    }
+    files.set(meta.name, outBytes);
+  }
+  return files;
+}
+
+function latin1Decode(bytes){
+  let s = ""; const chunk = 0x8000;
+  for (let i=0;i<bytes.length;i+=chunk) s += String.fromCharCode(...bytes.subarray(i, i+chunk));
+  return s;
+}
+function latin1Encode(str){
+  const out = new Uint8Array(str.length);
+  for (let i=0;i<str.length;i++) out[i] = str.charCodeAt(i) & 0xFF;
+  return out;
+}
+
+async function extractDocx(file){
+  const zip = await readZipEntries(await file.arrayBuffer());
+  const docBytes = zip.get("word/document.xml");
+  if (!docBytes) throw new Error("ไม่พบเนื้อหาเอกสารในไฟล์ .docx นี้");
+  const xmlDoc = new DOMParser().parseFromString(new TextDecoder("utf-8").decode(docBytes), "application/xml");
+  if (xmlDoc.querySelector("parsererror")) throw new Error("ไฟล์เสียหายหรืออ่านไม่ได้");
+  const paragraphs = xmlDoc.getElementsByTagName("w:p");
+  const lines = [];
+  for (const p of paragraphs){
+    let line = "";
+    for (const t of p.getElementsByTagName("w:t")) line += t.textContent;
+    lines.push(line);
+  }
+  return lines.join("\n").trim();
+}
+
+async function extractXlsx(file){
+  const zip = await readZipEntries(await file.arrayBuffer());
+  let shared = [];
+  const sharedBytes = zip.get("xl/sharedStrings.xml");
+  if (sharedBytes){
+    const doc = new DOMParser().parseFromString(new TextDecoder("utf-8").decode(sharedBytes), "application/xml");
+    for (const si of doc.getElementsByTagName("si")){
+      let s = ""; for (const t of si.getElementsByTagName("t")) s += t.textContent;
+      shared.push(s);
+    }
+  }
+  const sheetNames = [...zip.keys()]
+    .filter(n=>/^xl\/worksheets\/sheet\d+\.xml$/.test(n))
+    .sort((a,b)=>parseInt(a.match(/\d+/)[0]) - parseInt(b.match(/\d+/)[0]));
+  if (!sheetNames.length) throw new Error("ไม่พบข้อมูลตารางในไฟล์นี้");
+  const sheetTexts = [];
+  let idx = 0;
+  for (const sn of sheetNames){
+    idx++;
+    const doc = new DOMParser().parseFromString(new TextDecoder("utf-8").decode(zip.get(sn)), "application/xml");
+    const rowLines = [];
+    for (const row of doc.getElementsByTagName("row")){
+      const vals = [];
+      for (const c of row.getElementsByTagName("c")){
+        const type = c.getAttribute("t");
+        let val = "";
+        if (type === "s"){
+          const vEl = c.getElementsByTagName("v")[0];
+          const si = vEl ? parseInt(vEl.textContent) : -1;
+          val = shared[si] ?? "";
+        } else if (type === "inlineStr"){
+          const isEl = c.getElementsByTagName("is")[0];
+          val = isEl ? isEl.textContent : "";
+        } else {
+          const vEl = c.getElementsByTagName("v")[0];
+          val = vEl ? vEl.textContent : "";
+        }
+        vals.push(val);
+      }
+      if (vals.some(v=>v!=="")) rowLines.push(vals.join("\t"));
+    }
+    if (rowLines.length) sheetTexts.push(`== ชีต ${idx} ==\n` + rowLines.join("\n"));
+  }
+  return sheetTexts.join("\n\n").trim();
+}
+
+function decodePdfLiteral(s){
+  return s.replace(/\\(\d{1,3}|.)/g, (_,g)=>{
+    if (/^\d+$/.test(g)) return String.fromCharCode(parseInt(g,8));
+    if (g==="n") return "\n"; if (g==="r") return "\r"; if (g==="t") return "\t";
+    return g;
+  });
+}
+
+async function extractPdfBestEffort(file){
+  if (!window.DecompressionStream) throw new Error("เบราว์เซอร์นี้ไม่รองรับการอ่านไฟล์ประเภทนี้ กรุณาใช้ Chrome หรือ Edge เวอร์ชันล่าสุด");
+  if (file.size > 30_000_000) throw new Error("ไฟล์ใหญ่เกินไปสำหรับการดึงข้อความอัตโนมัติ");
+  const raw = latin1Decode(new Uint8Array(await file.arrayBuffer()));
+  const streamRe = /stream\r?\n([\s\S]*?)\r?\nendstream/g;
+  const chunks = [];
+  let m;
+  while ((m = streamRe.exec(raw))){
+    const before = raw.slice(Math.max(0, m.index-300), m.index);
+    if (!/\/Filter\s*\/FlateDecode/.test(before)) continue;
+    let inflated;
+    try{
+      const ds = new DecompressionStream("deflate");
+      const writer = ds.writable.getWriter();
+      writer.write(latin1Encode(m[1])); writer.close();
+      inflated = latin1Decode(new Uint8Array(await new Response(ds.readable).arrayBuffer()));
+    }catch(e){ continue; }
+    const textRe = /\(((?:\\.|[^()\\])*)\)\s*Tj|\[((?:[^\[\]])*)\]\s*TJ/g;
+    let tm;
+    while ((tm = textRe.exec(inflated))){
+      if (tm[1] !== undefined){
+        chunks.push(decodePdfLiteral(tm[1]));
+      } else if (tm[2] !== undefined){
+        const litRe = /\(((?:\\.|[^()\\])*)\)/g;
+        let lm, line = "";
+        while ((lm = litRe.exec(tm[2]))) line += decodePdfLiteral(lm[1]);
+        chunks.push(line);
+      }
+    }
+    chunks.push("\n");
+  }
+  const text = chunks.join(" ").replace(/[ \t]+\n/g,"\n").replace(/\n{3,}/g,"\n\n").trim();
+  const printable = (text.match(/[\x20-\x7E฀-๿]/g) || []).length;
+  const confidence = (text.length>0 && printable/text.length > 0.6) ? "ok" : "low";
+  return {text, confidence};
+}
+
+async function extractAnyFile(file){
+  const ext = file.name.split(".").pop().toLowerCase();
+  if (ext === "docx") return {text: await extractDocx(file), confidence:"ok"};
+  if (ext === "xls") throw new Error("รองรับเฉพาะไฟล์ .xlsx (Excel รุ่นใหม่) เท่านั้น");
+  if (ext === "xlsx") return {text: await extractXlsx(file), confidence:"ok"};
+  if (ext === "pdf") return await extractPdfBestEffort(file);
+  throw new Error("ไม่รองรับไฟล์ประเภทนี้ (รองรับ .docx, .xlsx, .pdf)");
+}
+
+function defaultState(){
+  return { novels: [], updatedAt: 0 };
+}
+function newNovel(title){
+  return {
+    id: uid(), title: title || "นิยายเรื่องใหม่", status: "ongoing", coverUrl: null, synopsis: "", updatedAt: Date.now(),
+    chapters: [], characters: [], threads: [], locations: [], customDictionary: [],
+  };
+}
+
+let state = defaultState();
+let activeNovelId = null;
+let route = (location.hash || "#library").slice(1);
+let sel = { chapterId: null, sceneId: null, characterId: null, threadId: null, locationId: null };
+let charView = "list";
+let mapScope = { mode: "overview", chapterId: null };
+let serverOk = false;
+
+function N(){ return state.novels.find(n=>n.id===activeNovelId) || null; }
+function setActiveNovel(id){
+  activeNovelId = id;
+  try{ if (id) localStorage.setItem("novelHelperActiveId", id); else localStorage.removeItem("novelHelperActiveId"); }catch(e){}
+}
+
+/* ---------------- persistence ---------------- */
+function rawUpdatedAt(raw){
+  if (!raw) return 0;
+  if (Array.isArray(raw.novels)) return raw.updatedAt || 0;
+  return raw.meta?.updatedAt || 0;
+}
+function migrateAndNormalize(raw){
+  let s;
+  if (!raw){
+    s = defaultState();
+  } else if (Array.isArray(raw.novels)){
+    s = Object.assign(defaultState(), raw);
+  } else if (raw.chapters || raw.characters || raw.threads || raw.locations || raw.meta){
+    // legacy single-novel format from before the multi-novel library existed
+    const novel = newNovel(raw.meta?.title || "นิยายเรื่องใหม่");
+    novel.synopsis = raw.meta?.synopsis || "";
+    novel.chapters = raw.chapters || [];
+    novel.characters = raw.characters || [];
+    novel.threads = raw.threads || [];
+    novel.locations = raw.locations || [];
+    novel.updatedAt = raw.meta?.updatedAt || Date.now();
+    s = defaultState();
+    s.novels.push(novel);
+  } else {
+    s = defaultState();
+  }
+  normalizeState(s);
+  return s;
+}
+function normalizeState(s){
+  for (const n of s.novels){
+    if (typeof n.title !== "string") n.title = "นิยายเรื่องใหม่";
+    if (n.status !== "ongoing" && n.status !== "finished") n.status = "ongoing";
+    if (n.coverUrl === undefined) n.coverUrl = null;
+    if (typeof n.synopsis !== "string") n.synopsis = "";
+    if (!Array.isArray(n.chapters)) n.chapters = [];
+    if (!Array.isArray(n.characters)) n.characters = [];
+    if (!Array.isArray(n.threads)) n.threads = [];
+    if (!Array.isArray(n.locations)) n.locations = [];
+    if (!Array.isArray(n.customDictionary)) n.customDictionary = [];
+    for (const ch of n.chapters){
+      if (typeof ch.summary !== "string") ch.summary = "";
+      if (!Array.isArray(ch.scenes)) ch.scenes = [];
+      for (const sc of ch.scenes){
+        if (!Array.isArray(sc.attachments)) sc.attachments = [];
+        if (!Array.isArray(sc.images)) sc.images = [];
+        if (!Array.isArray(sc.characterIds)) sc.characterIds = [];
+        if (!Array.isArray(sc.threadIds)) sc.threadIds = [];
+        if (!Array.isArray(sc.spellFixedWords)) sc.spellFixedWords = [];
+      }
+    }
+    for (const c of n.characters){
+      if (c.imageUrl === undefined) c.imageUrl = null;
+      if (!Array.isArray(c.relationships)) c.relationships = [];
+      for (const r of c.relationships){ if (r.kind !== "positive" && r.kind !== "conflict") r.kind = "positive"; }
+    }
+    for (const t of n.threads){ if (!Array.isArray(t.characterIds)) t.characterIds = []; }
+  }
+}
+
+async function loadData(){
+  let fromServer = null, fromLocal = null;
+  try{
+    const res = await fetch("/api/data", {cache:"no-store"});
+    if (res.ok){
+      const j = await res.json();
+      if (j) fromServer = j;
+      serverOk = true;
+    }
+  }catch(e){ serverOk = false; }
+
+  try{
+    const raw = localStorage.getItem("novelHelperData");
+    if (raw) fromLocal = JSON.parse(raw);
+  }catch(e){}
+
+  let raw;
+  if (fromServer && fromLocal) raw = rawUpdatedAt(fromLocal) > rawUpdatedAt(fromServer) ? fromLocal : fromServer;
+  else raw = fromServer || fromLocal || null;
+
+  state = migrateAndNormalize(raw);
+
+  try{
+    const savedActive = localStorage.getItem("novelHelperActiveId");
+    if (savedActive && state.novels.some(n=>n.id===savedActive)) activeNovelId = savedActive;
+  }catch(e){}
+}
+
+const scheduleSave = debounce(saveData, 500);
+async function saveData(){
+  state.updatedAt = Date.now();
+  const n = N();
+  if (n) n.updatedAt = state.updatedAt;
+  try{ localStorage.setItem("novelHelperData", JSON.stringify(state)); }catch(e){}
+  try{
+    const res = await fetch("/api/data", {
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body: JSON.stringify(state)
+    });
+    serverOk = res.ok;
+  }catch(e){ serverOk = false; }
+  updateSyncDot();
+}
+function updateSyncDot(){
+  const dot = document.getElementById("syncdot");
+  const lbl = document.getElementById("syncstatus");
+  if (!dot) return;
+  dot.className = serverOk ? "on" : "off";
+  if (lbl) lbl.textContent = serverOk ? "ซิงก์แล้ว · " + fmtTime(state.updatedAt) : "ออฟไลน์ (บันทึกในเครื่อง)";
+}
+
+/* ---------------- lookups (within the active novel) ---------------- */
+function allScenes(){
+  const n = N(); if (!n) return [];
+  const out = [];
+  for (const ch of n.chapters) for (const sc of ch.scenes) out.push({ch, sc});
+  return out;
+}
+function scenesWithCharacter(id){ return allScenes().filter(x=>x.sc.characterIds.includes(id)); }
+function scenesWithThread(id){ return allScenes().filter(x=>x.sc.threadIds.includes(id)); }
+function threadsForCharacter(id){
+  const n = N();
+  const fromManual = n.threads.filter(t=>t.characterIds.includes(id));
+  const fromScenes = new Set();
+  for (const {sc} of scenesWithCharacter(id)) for (const tid of sc.threadIds) fromScenes.add(tid);
+  const all = new Map();
+  for (const t of fromManual) all.set(t.id, t);
+  for (const tid of fromScenes) { const t = n.threads.find(x=>x.id===tid); if (t) all.set(t.id, t); }
+  return [...all.values()];
+}
+
+/* ---------------- render shell ---------------- */
+const WORKSPACE_ROUTES = [
+  {id:"dashboard", label:"แดชบอร์ด", ic:"🏠"},
+  {id:"chapters",  label:"บท/ฉาก",   ic:"📖"},
+  {id:"characters",label:"ตัวละคร", ic:"🧑‍🤝‍🧑"},
+  {id:"threads",   label:"ปมเรื่อง", ic:"🧵"},
+  {id:"locations", label:"สถานที่", ic:"📍"},
+  {id:"spellcheck",label:"ตรวจคำผิด", ic:"✅"},
+];
+
+function renderNav(){
+  const nav = document.getElementById("nav");
+  const novel = N();
+  const workspaceBtns = novel ? WORKSPACE_ROUTES.map(r=>`<button class="navbtn ${route===r.id?"active":""}" data-route="${r.id}"><span class="ic">${r.ic}</span>${r.label}</button>`).join("") : "";
+  nav.innerHTML = `
+    <div class="brand">✒️ ผู้ช่วยเขียนนิยาย<small>${novel?esc(novel.title):"คลังนิยายทั้งหมด"}</small></div>
+    <button class="navbtn ${route==="library"?"active":""}" data-route="library"><span class="ic">📚</span>คลังนิยาย</button>
+    ${novel ? `<div style="height:6px"></div>${workspaceBtns}` : ""}
+    <div class="foot">
+      <div><span id="syncdot"></span><span id="syncstatus">-</span></div>
+      <div class="footbtns">
+        <button id="btnExport">ส่งออก</button>
+        <button id="btnImport">นำเข้า</button>
+      </div>
+    </div>`;
+  nav.querySelectorAll("[data-route]").forEach(b=>b.onclick = ()=> location.hash = "#"+b.dataset.route);
+  document.getElementById("btnExport").onclick = exportJson;
+  document.getElementById("btnImport").onclick = importJson;
+  updateSyncDot();
+
+  const bnRoutes = novel ? [{id:"library",label:"คลัง",ic:"📚"}, ...WORKSPACE_ROUTES] : [{id:"library",label:"คลังนิยาย",ic:"📚"}];
+  const bn = document.getElementById("bottomnav");
+  bn.innerHTML = bnRoutes.map(r=>`<button class="${route===r.id?"active":""}" data-route="${r.id}"><span class="ic">${r.ic}</span>${r.label}</button>`).join("");
+  bn.querySelectorAll("[data-route]").forEach(b=>b.onclick = ()=> location.hash = "#"+b.dataset.route);
+}
+
+function exportJson(){
+  const blob = new Blob([JSON.stringify(state,null,2)], {type:"application/json"});
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  const d = new Date();
+  a.download = `novel-data-${d.getFullYear()}${String(d.getMonth()+1).padStart(2,"0")}${String(d.getDate()).padStart(2,"0")}.json`;
+  a.click();
+  URL.revokeObjectURL(a.href);
+}
+function importJson(){
+  const inp = document.createElement("input");
+  inp.type = "file"; inp.accept = "application/json";
+  inp.onchange = () => {
+    const f = inp.files[0]; if (!f) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+      try{
+        const j = JSON.parse(reader.result);
+        if (!confirm("นำเข้าข้อมูลนี้จะแทนที่ข้อมูลนิยายทั้งหมดในคลัง ดำเนินการต่อ?")) return;
+        state = migrateAndNormalize(j);
+        setActiveNovel(null);
+        saveData(); route = "library"; render();
+      }catch(e){ alert("ไฟล์ไม่ถูกต้อง: " + e.message); }
+    };
+    reader.readAsText(f, "utf-8");
+  };
+  inp.click();
+}
+
+function render(){
+  if (route !== "library" && !N()) route = "library";
+  renderNav();
+  const view = document.getElementById("view");
+  if (route === "library") renderLibrary(view);
+  else if (route === "dashboard") view.innerHTML = viewDashboard();
+  else if (route === "chapters") renderChapters(view);
+  else if (route === "characters") renderCharacters(view);
+  else if (route === "threads") renderThreads(view);
+  else if (route === "locations") renderLocations(view);
+  else if (route === "spellcheck") renderSpellChecker(view);
+  else view.innerHTML = `<div class="empty">ไม่พบหน้านี้</div>`;
+  wireDashboardIfNeeded();
+}
+
+/* ---------------- library (multi-novel home) ---------------- */
+function renderLibrary(view){
+  view.innerHTML = `
+    <div class="row" style="justify-content:space-between;margin-bottom:14px;">
+      <h2 style="margin:0;">คลังนิยายของฉัน</h2>
+      <button class="btn primary" id="addNovel">+ เพิ่มนิยายเรื่องใหม่</button>
+    </div>
+    ${state.novels.length ? `<div class="stats-grid">
+      <div class="stat"><b>${state.novels.length}</b><span class="muted">เรื่องทั้งหมด</span></div>
+      <div class="stat"><b>${state.novels.filter(n=>n.status==="ongoing").length}</b><span class="muted">กำลังเขียน</span></div>
+      <div class="stat"><b>${state.novels.filter(n=>n.status==="finished").length}</b><span class="muted">จบแล้ว</span></div>
+      <div class="stat"><b>${state.novels.reduce((sum,n)=>sum+n.chapters.length,0)}</b><span class="muted">ตอนทั้งหมด</span></div>
+    </div>` : ""}
+    <div class="novelgrid" id="novelGrid">
+      ${state.novels.map(n=>{
+        const isFinished = n.status === "finished";
+        return `
+        <div class="novelcard">
+          <div class="cover" data-open-novel="${n.id}">
+            ${n.coverUrl ? `<img src="${n.coverUrl}" alt="${esc(n.title)}">` : `<div class="cover-empty">ไม่มีปก</div>`}
+          </div>
+          <div class="novelcard-body">
+            <div class="novelcard-title" data-open-novel="${n.id}">${esc(n.title||"(ไม่มีชื่อ)")}</div>
+            <div class="row" style="gap:6px;margin-bottom:8px;">
+              <span class="badge ${isFinished?"resolved":"open"}">${isFinished?"จบแล้ว":"กำลังเขียน"}</span>
+              <span class="muted">${n.chapters.length} ตอน</span>
+            </div>
+            <div class="row" style="gap:6px;">
+              <button class="btn small" data-open-novel="${n.id}">เปิด</button>
+              <button class="btn ghost small danger" data-del-novel="${n.id}">ลบ</button>
+            </div>
+          </div>
+        </div>`;
+      }).join("") || `<div class="empty">ยังไม่มีนิยาย — เริ่มสร้างเรื่องแรกของคุณ</div>`}
+    </div>`;
+
+  document.getElementById("addNovel").onclick = () => {
+    const n = newNovel();
+    state.novels.push(n);
+    setActiveNovel(n.id);
+    scheduleSave();
+    route = "dashboard"; render();
+  };
+  document.querySelectorAll("[data-open-novel]").forEach(el=>el.onclick = () => {
+    setActiveNovel(el.dataset.openNovel);
+    route = "dashboard"; render();
+  });
+  document.querySelectorAll("[data-del-novel]").forEach(el=>el.onclick = () => {
+    const n = state.novels.find(x=>x.id===el.dataset.delNovel);
+    if (!confirm(`ลบนิยายเรื่อง "${n?.title}" ทั้งหมด (บท/ตัวละคร/ปมเรื่องทั้งหมดในเรื่องนี้จะหายไป)? การกระทำนี้ย้อนกลับไม่ได้`)) return;
+    state.novels = state.novels.filter(x=>x.id!==el.dataset.delNovel);
+    if (activeNovelId === el.dataset.delNovel) setActiveNovel(null);
+    scheduleSave(); renderLibrary(view);
+  });
+}
+
+/* ---------------- dashboard (per-novel) ---------------- */
+function viewDashboard(){
+  const n = N();
+  const sceneCount = allScenes().length;
+  const openThreads = n.threads.filter(t=>t.status!=="resolved");
+  return `
+    <div class="card">
+      <div class="row" style="align-items:flex-start;">
+        <div>
+          ${n.coverUrl ? `<img class="cover-thumb" src="${n.coverUrl}" alt="${esc(n.title)}">` : `<div class="cover-thumb-empty">ไม่มีปก</div>`}
+          <div style="margin-top:6px;display:flex;flex-direction:column;gap:4px;">
+            <label class="filebtn" style="justify-content:center;">${n.coverUrl?"เปลี่ยนปก":"+ เพิ่มปก"}<input type="file" id="d-cover-input" accept="image/png,image/jpeg"></label>
+            ${n.coverUrl ? `<button class="btn ghost small" id="d-cover-remove">ลบปก</button>` : ""}
+          </div>
+        </div>
+        <div class="col grow">
+          <label>ชื่อเรื่อง</label>
+          <input type="text" id="d-title" value="${esc(n.title)}">
+          <div style="height:8px"></div>
+          <label>สถานะเรื่อง</label>
+          <select id="d-status">
+            <option value="ongoing" ${n.status==="ongoing"?"selected":""}>กำลังเขียน</option>
+            <option value="finished" ${n.status==="finished"?"selected":""}>จบแล้ว</option>
+          </select>
+        </div>
+      </div>
+      <div style="height:8px"></div>
+      <label>เรื่องย่อ / โน้ตรวม</label>
+      <textarea id="d-synopsis" rows="4">${esc(n.synopsis)}</textarea>
+    </div>
+    <div class="stats-grid">
+      <div class="stat"><b>${n.chapters.length}</b><span class="muted">บท</span></div>
+      <div class="stat"><b>${sceneCount}</b><span class="muted">ฉาก</span></div>
+      <div class="stat"><b>${n.characters.length}</b><span class="muted">ตัวละคร</span></div>
+      <div class="stat"><b>${openThreads.length}</b><span class="muted">ปมค้างอยู่</span></div>
+    </div>
+    <div class="card">
+      <h3>ปมเรื่องที่ยังไม่คลี่คลาย</h3>
+      ${openThreads.length ? `<div class="list">${openThreads.map(t=>`
+        <div class="item"><span class="t" data-open-thread="${t.id}">🧵 ${esc(t.title)}</span><span class="badge open">ค้าง</span></div>
+      `).join("")}</div>` : `<div class="empty">ยังไม่มีปมค้างอยู่ — ไปที่แท็บ "ปมเรื่อง" เพื่อเพิ่ม</div>`}
+    </div>`;
+}
+function wireDashboardIfNeeded(){
+  const n = N();
+  if (!n || route !== "dashboard") return;
+  const t = document.getElementById("d-title");
+  if (t) t.oninput = () => { n.title = t.value; document.querySelector("#nav .brand small").textContent = t.value; scheduleSave(); };
+  const s = document.getElementById("d-synopsis");
+  if (s) s.oninput = () => { n.synopsis = s.value; scheduleSave(); };
+  const st = document.getElementById("d-status");
+  if (st) st.onchange = () => { n.status = st.value; scheduleSave(); };
+  const coverInput = document.getElementById("d-cover-input");
+  if (coverInput) coverInput.onchange = async (e) => {
+    const file = e.target.files[0]; if (!file) return;
+    try{ const up = await uploadFile(file); n.coverUrl = up.url; scheduleSave(); render(); }
+    catch(err){ alert(`อัปโหลดปกไม่สำเร็จ (ต้องเชื่อมต่อกับ server): ${err.message}`); }
+  };
+  const coverRemove = document.getElementById("d-cover-remove");
+  if (coverRemove) coverRemove.onclick = () => { n.coverUrl = null; scheduleSave(); render(); };
+  document.querySelectorAll("[data-open-thread]").forEach(el=>{
+    el.onclick = () => { sel.threadId = el.dataset.openThread; location.hash = "#threads"; };
+  });
+}
+
+/* ---------------- chapters & scenes ---------------- */
+function renderChapters(view){
+  const n = N();
+  if (!sel.chapterId && n.chapters[0]) sel.chapterId = n.chapters[0].id;
+  const chapter = n.chapters.find(c=>c.id===sel.chapterId) || null;
+  if (chapter && !sel.sceneId && chapter.scenes[0]) sel.sceneId = chapter.scenes[0].id;
+
+  view.innerHTML = `
+    <div class="two-col">
+      <div>
+        <div class="card">
+          <div class="row" style="justify-content:space-between;margin-bottom:6px;">
+            <h3 style="margin:0;">บท</h3>
+            <button class="btn small" id="addChapter">+ เพิ่มบท</button>
+          </div>
+          <div class="list" id="chapterList">
+            ${n.chapters.map((c,i)=>`
+              <div class="item ${c.id===sel.chapterId?"active":""}">
+                <span class="t" data-ch="${c.id}" id="ch-label-${c.id}">${i+1}. ${esc(c.title||"(ไม่มีชื่อบท)")}</span>
+                <span class="row" style="gap:2px;">
+                  <button class="btn ghost small" data-mv="${c.id}:-1" title="เลื่อนขึ้น">↑</button>
+                  <button class="btn ghost small" data-mv="${c.id}:1" title="เลื่อนลง">↓</button>
+                  <button class="btn ghost small" data-delch="${c.id}" title="ลบบท">✕</button>
+                </span>
+              </div>`).join("") || `<div class="empty">ยังไม่มีบท</div>`}
+          </div>
+        </div>
+        ${chapter ? `
+        <div class="card">
+          <label>สรุปเหตุการณ์ภายในตอนนี้</label>
+          <textarea id="ch-summary" class="serif" rows="5" placeholder="เขียนสรุปคร่าวๆ ว่าตอนนี้เกิดอะไรขึ้นบ้าง (ผู้ใช้กรอกเอง — ระบบไม่มี AI สรุปให้อัตโนมัติ)">${esc(chapter.summary)}</textarea>
+        </div>
+        <div class="card">
+          <div class="row" style="justify-content:space-between;margin-bottom:6px;">
+            <h3 style="margin:0;">ฉากในบทนี้</h3>
+            <button class="btn small" id="addScene">+ เพิ่มฉาก</button>
+          </div>
+          <div class="list" id="sceneList">
+            ${chapter.scenes.map((s,i)=>`
+              <div class="item ${s.id===sel.sceneId?"active":""}">
+                <span class="t" data-sc="${s.id}" id="sc-label-${s.id}">${i+1}. ${esc(s.title||"(ไม่มีชื่อฉาก)")}</span>
+                <span class="row" style="gap:2px;">
+                  <button class="btn ghost small" data-mvsc="${s.id}:-1">↑</button>
+                  <button class="btn ghost small" data-mvsc="${s.id}:1">↓</button>
+                  <button class="btn ghost small" data-delsc="${s.id}">✕</button>
+                </span>
+              </div>`).join("") || `<div class="empty">ยังไม่มีฉาก</div>`}
+          </div>
+        </div>` : ""}
+      </div>
+      <div id="sceneEditor"></div>
+    </div>`;
+
+  document.getElementById("addChapter").onclick = () => {
+    const c = {id:uid(), title:"บทใหม่", order:n.chapters.length, summary:"", scenes:[]};
+    n.chapters.push(c); sel.chapterId = c.id; sel.sceneId = null; scheduleSave(); renderChapters(view);
+  };
+  document.querySelectorAll("[data-ch]").forEach(el=>el.onclick = () => { sel.chapterId = el.dataset.ch; sel.sceneId = null; renderChapters(view); });
+  document.querySelectorAll("[data-delch]").forEach(el=>el.onclick = () => {
+    if (!confirm("ลบบทนี้และฉากทั้งหมดในบท?")) return;
+    n.chapters = n.chapters.filter(c=>c.id!==el.dataset.delch);
+    if (sel.chapterId===el.dataset.delch){ sel.chapterId=null; sel.sceneId=null; }
+    scheduleSave(); renderChapters(view);
+  });
+  document.querySelectorAll("[data-mv]").forEach(el=>el.onclick = () => {
+    const [id,dir] = el.dataset.mv.split(":");
+    moveInArray(n.chapters, id, parseInt(dir)); scheduleSave(); renderChapters(view);
+  });
+
+  if (chapter){
+    document.getElementById("ch-summary").oninput = (e) => { chapter.summary = e.target.value; scheduleSave(); };
+    document.getElementById("addScene").onclick = () => {
+      const s = {id:uid(), title:"ฉากใหม่", content:"", characterIds:[], threadIds:[], locationId:null, order:chapter.scenes.length, attachments:[], images:[]};
+      chapter.scenes.push(s); sel.sceneId = s.id; scheduleSave(); renderChapters(view);
+    };
+    document.querySelectorAll("[data-sc]").forEach(el=>el.onclick = () => { sel.sceneId = el.dataset.sc; renderSceneEditor(); wireSceneListClicks(view); });
+    document.querySelectorAll("[data-delsc]").forEach(el=>el.onclick = () => {
+      if (!confirm("ลบฉากนี้?")) return;
+      chapter.scenes = chapter.scenes.filter(s=>s.id!==el.dataset.delsc);
+      if (sel.sceneId===el.dataset.delsc) sel.sceneId = chapter.scenes[0]?.id || null;
+      scheduleSave(); renderChapters(view);
+    });
+    document.querySelectorAll("[data-mvsc]").forEach(el=>el.onclick = () => {
+      const [id,dir] = el.dataset.mvsc.split(":");
+      moveInArray(chapter.scenes, id, parseInt(dir)); scheduleSave(); renderChapters(view);
+    });
+  }
+  renderSceneEditor();
+}
+function wireSceneListClicks(view){
+  document.querySelectorAll("[data-sc]").forEach(el=>el.onclick = () => { sel.sceneId = el.dataset.sc; renderSceneEditor(); });
+}
+function moveInArray(arr, id, dir){
+  const i = arr.findIndex(x=>x.id===id);
+  const j = i + dir;
+  if (i<0 || j<0 || j>=arr.length) return;
+  [arr[i], arr[j]] = [arr[j], arr[i]];
+}
+
+function renderSceneEditor(){
+  const holder = document.getElementById("sceneEditor");
+  if (!holder) return;
+  const n = N();
+  const chapter = n.chapters.find(c=>c.id===sel.chapterId);
+  const scene = chapter?.scenes.find(s=>s.id===sel.sceneId);
+  if (!scene){ holder.innerHTML = `<div class="card empty">เลือกหรือเพิ่มฉากเพื่อเริ่มเขียน</div>`; return; }
+
+  holder.innerHTML = `
+    <div class="card">
+      <label>ชื่อฉาก</label>
+      <input type="text" id="sc-title" value="${esc(scene.title)}">
+      <div style="height:8px"></div>
+      <div class="row">
+        <div class="col grow">
+          <label>สถานที่</label>
+          <select id="sc-loc">
+            <option value="">— ไม่ระบุ —</option>
+            ${n.locations.map(l=>`<option value="${l.id}" ${l.id===scene.locationId?"selected":""}>${esc(l.name)}</option>`).join("")}
+          </select>
+        </div>
+      </div>
+      <div style="height:8px"></div>
+      <label>เนื้อหาฉาก</label>
+      <textarea id="sc-content" class="serif" rows="16">${esc(scene.content)}</textarea>
+    </div>
+    <div class="card">
+      <label>ตัวละครที่ปรากฏในฉากนี้</label>
+      <div id="sc-chars">
+        ${n.characters.length ? n.characters.map(c=>`<button class="chip ${scene.characterIds.includes(c.id)?"on":""}" data-toggle-char="${c.id}">${esc(c.name)}</button>`).join("") : `<div class="empty">ยังไม่มีตัวละคร — เพิ่มได้ที่แท็บ "ตัวละคร"</div>`}
+      </div>
+    </div>
+    <div class="card">
+      <label>ปมเรื่องที่เกี่ยวข้องในฉากนี้</label>
+      <div id="sc-threads">
+        ${n.threads.length ? n.threads.map(t=>`<button class="chip ${scene.threadIds.includes(t.id)?"on":""}" data-toggle-thread="${t.id}">${esc(t.title)}</button>`).join("") : `<div class="empty">ยังไม่มีปมเรื่อง — เพิ่มได้ที่แท็บ "ปมเรื่อง"</div>`}
+      </div>
+    </div>
+    <div class="card">
+      <div class="row" style="justify-content:space-between;margin-bottom:6px;">
+        <label style="margin:0;">ไฟล์อ้างอิง (Word / Excel / PDF) — ดึงข้อความจากไฟล์มาแทรกในเนื้อหาฉากได้</label>
+        <label class="filebtn">+ แนบไฟล์<input type="file" id="sc-file-input" accept=".docx,.xlsx,.xls,.pdf" multiple></label>
+      </div>
+      <div id="sc-attach-status" class="muted"></div>
+      <div class="list" id="sc-attach-list">
+        ${scene.attachments.map(a=>`
+          <div class="item">
+            <span class="t">${fileIcon(a.type)} ${esc(a.name)} <span class="muted">(${a.charCount.toLocaleString("th-TH")} ตัวอักษร)</span> ${a.confidence==="low"?'<span class="badge low">อาจไม่สมบูรณ์</span>':""}</span>
+            <span class="row" style="gap:4px;">
+              <button class="btn ghost small" data-insert-attach="${a.id}" ${a.extractedText?"":"disabled"}>แทรกในเนื้อหา</button>
+              <button class="btn ghost small" data-delattach="${a.id}">✕</button>
+            </span>
+          </div>`).join("") || `<div class="empty">ยังไม่มีไฟล์แนบ</div>`}
+      </div>
+    </div>
+    <div class="card">
+      <div class="row" style="justify-content:space-between;margin-bottom:6px;">
+        <label style="margin:0;">รูปอ้างอิง (PNG / JPEG)</label>
+        <label class="filebtn">+ เพิ่มรูป<input type="file" id="sc-image-input" accept="image/png,image/jpeg" multiple></label>
+      </div>
+      <div id="sc-image-status" class="muted"></div>
+      <div class="imggrid" id="sc-image-grid">
+        ${scene.images.map(img=>`
+          <div class="imgthumb">
+            <a href="${img.url}" target="_blank"><img src="${img.url}" alt="${esc(img.name)}"></a>
+            <button class="imgdel" data-delimg="${img.id}">✕</button>
+          </div>`).join("") || `<div class="empty">ยังไม่มีรูป</div>`}
+      </div>
+    </div>`;
+
+  document.getElementById("sc-title").oninput = (e) => {
+    scene.title = e.target.value;
+    const lbl = document.getElementById("sc-label-"+scene.id);
+    if (lbl) lbl.textContent = (chapter.scenes.indexOf(scene)+1) + ". " + (scene.title || "(ไม่มีชื่อฉาก)");
+    scheduleSave();
+  };
+  document.getElementById("sc-loc").onchange = (e) => { scene.locationId = e.target.value || null; scheduleSave(); };
+  document.getElementById("sc-content").oninput = (e) => { scene.content = e.target.value; scheduleSave(); };
+  document.querySelectorAll("[data-toggle-char]").forEach(el=>el.onclick = () => {
+    const id = el.dataset.toggleChar;
+    const i = scene.characterIds.indexOf(id);
+    if (i>=0) scene.characterIds.splice(i,1); else scene.characterIds.push(id);
+    el.classList.toggle("on");
+    scheduleSave();
+  });
+  document.querySelectorAll("[data-toggle-thread]").forEach(el=>el.onclick = () => {
+    const id = el.dataset.toggleThread;
+    const i = scene.threadIds.indexOf(id);
+    if (i>=0) scene.threadIds.splice(i,1); else scene.threadIds.push(id);
+    el.classList.toggle("on");
+    scheduleSave();
+  });
+
+  document.getElementById("sc-file-input").onchange = (e) => handleAttachFiles(e.target.files, scene);
+  document.getElementById("sc-image-input").onchange = (e) => handleImageFiles(e.target.files, scene);
+  document.querySelectorAll("[data-insert-attach]").forEach(el=>el.onclick = () => {
+    const a = scene.attachments.find(x=>x.id===el.dataset.insertAttach);
+    if (!a || !a.extractedText) return;
+    scene.content = (scene.content ? scene.content + "\n\n" : "") + a.extractedText;
+    scheduleSave(); renderSceneEditor();
+  });
+  document.querySelectorAll("[data-delattach]").forEach(el=>el.onclick = () => {
+    scene.attachments = scene.attachments.filter(x=>x.id!==el.dataset.delattach);
+    scheduleSave(); renderSceneEditor();
+  });
+  document.querySelectorAll("[data-delimg]").forEach(el=>el.onclick = () => {
+    scene.images = scene.images.filter(x=>x.id!==el.dataset.delimg);
+    scheduleSave(); renderSceneEditor();
+  });
+}
+
+async function handleAttachFiles(fileList, scene){
+  const files = Array.from(fileList);
+  if (!files.length) return;
+  const statusEl = document.getElementById("sc-attach-status");
+  for (const file of files){
+    if (statusEl) statusEl.textContent = `กำลังอ่านไฟล์: ${file.name}...`;
+    let extractedText = "", confidence = "ok";
+    try{
+      const r = await extractAnyFile(file);
+      extractedText = r.text; confidence = r.confidence;
+    }catch(e){
+      alert(`อ่านไฟล์ "${file.name}" ไม่สำเร็จ: ${e.message}`);
+      continue;
+    }
+    let url = null;
+    try{ url = (await uploadFile(file)).url; }catch(e){ /* offline: keep extracted text only, skip original */ }
+    scene.attachments.push({id:uid(), name:file.name, type:file.name.split(".").pop().toLowerCase(), url, extractedText, charCount:extractedText.length, confidence});
+  }
+  if (statusEl) statusEl.textContent = "";
+  scheduleSave(); renderSceneEditor();
+}
+
+async function handleImageFiles(fileList, scene){
+  const files = Array.from(fileList);
+  if (!files.length) return;
+  const statusEl = document.getElementById("sc-image-status");
+  for (const file of files){
+    if (statusEl) statusEl.textContent = `กำลังอัปโหลดรูป: ${file.name}...`;
+    try{
+      const up = await uploadFile(file);
+      scene.images.push({id:uid(), name:file.name, url:up.url});
+    }catch(e){
+      alert(`อัปโหลดรูป "${file.name}" ไม่สำเร็จ (ต้องเชื่อมต่อกับ server): ${e.message}`);
+    }
+  }
+  if (statusEl) statusEl.textContent = "";
+  scheduleSave(); renderSceneEditor();
+}
+
+/* ---------------- characters ---------------- */
+function renderCharacters(view){
+  view.innerHTML = `
+    <div class="row" style="gap:6px;margin-bottom:12px;">
+      <button class="subtab ${charView==="list"?"active":""}" id="tabCharList">🧑‍🤝‍🧑 รายชื่อตัวละคร</button>
+      <button class="subtab ${charView==="map"?"active":""}" id="tabCharMap">🕸️ แผนผังความสัมพันธ์</button>
+    </div>
+    <div id="charBody"></div>`;
+  document.getElementById("tabCharList").onclick = () => { charView = "list"; render(); };
+  document.getElementById("tabCharMap").onclick = () => { charView = "map"; render(); };
+  const body = document.getElementById("charBody");
+  if (charView === "map") renderCharacterMap(body);
+  else renderCharacterList(body);
+}
+
+function renderCharacterList(view){
+  const n = N();
+  if (!sel.characterId && n.characters[0]) sel.characterId = n.characters[0].id;
+
+  view.innerHTML = `
+    <div class="two-col">
+      <div class="card">
+        <div class="row" style="justify-content:space-between;margin-bottom:6px;">
+          <h3 style="margin:0;">ตัวละคร</h3>
+          <button class="btn small" id="addChar">+ เพิ่ม</button>
+        </div>
+        <div class="list">
+          ${n.characters.map(x=>`
+            <div class="item ${x.id===sel.characterId?"active":""}">
+              <span class="t" data-char="${x.id}" id="char-label-${x.id}">${esc(x.name||"(ไม่มีชื่อ)")}</span>
+              <button class="btn ghost small" data-delchar="${x.id}">✕</button>
+            </div>`).join("") || `<div class="empty">ยังไม่มีตัวละคร</div>`}
+        </div>
+      </div>
+      <div id="charEditor"></div>
+    </div>`;
+
+  document.getElementById("addChar").onclick = () => {
+    const c2 = {id:uid(), name:"ตัวละครใหม่", role:"", description:"", traits:"", relationships:[], imageUrl:null};
+    n.characters.push(c2); sel.characterId = c2.id; scheduleSave(); renderCharacterList(view);
+  };
+  document.querySelectorAll("[data-char]").forEach(el=>el.onclick = () => { sel.characterId = el.dataset.char; renderCharacterEditor(); document.querySelectorAll(".list .item").forEach(i=>i.classList.remove("active")); el.closest(".item").classList.add("active"); });
+  document.querySelectorAll("[data-delchar]").forEach(el=>el.onclick = () => {
+    if (!confirm("ลบตัวละครนี้? (แท็กในฉาก/ปมเรื่องที่เกี่ยวข้องจะถูกลบด้วย)")) return;
+    const id = el.dataset.delchar;
+    n.characters = n.characters.filter(x=>x.id!==id);
+    for (const {sc} of allScenes()) sc.characterIds = sc.characterIds.filter(i=>i!==id);
+    for (const t of n.threads) t.characterIds = t.characterIds.filter(i=>i!==id);
+    for (const x of n.characters) x.relationships = x.relationships.filter(r=>r.targetId!==id);
+    if (sel.characterId===id) sel.characterId = n.characters[0]?.id || null;
+    scheduleSave(); renderCharacterList(view);
+  });
+  renderCharacterEditor();
+}
+function renderCharacterEditor(){
+  const holder = document.getElementById("charEditor");
+  if (!holder) return;
+  const n = N();
+  const c = n.characters.find(x=>x.id===sel.characterId);
+  if (!c){ holder.innerHTML = `<div class="card empty">เลือกหรือเพิ่มตัวละคร</div>`; return; }
+
+  const scenes = scenesWithCharacter(c.id);
+  const threads = threadsForCharacter(c.id);
+  const others = n.characters.filter(x=>x.id!==c.id);
+
+  holder.innerHTML = `
+    <div class="card">
+      <div class="row" style="align-items:flex-start;">
+        <div>
+          ${c.imageUrl ? `<img class="portrait" src="${c.imageUrl}" alt="${esc(c.name)}">` : `<div class="portrait-empty">ไม่มีรูป</div>`}
+          <div style="margin-top:6px;display:flex;flex-direction:column;gap:4px;">
+            <label class="filebtn" style="justify-content:center;">${c.imageUrl?"เปลี่ยนรูป":"+ เพิ่มรูป"}<input type="file" id="c-image-input" accept="image/png,image/jpeg"></label>
+            ${c.imageUrl ? `<button class="btn ghost small" id="c-image-remove">ลบรูป</button>` : ""}
+          </div>
+        </div>
+        <div class="col grow">
+          <label>ชื่อ</label><input type="text" id="c-name" value="${esc(c.name)}">
+          <div style="height:8px"></div>
+          <label>บทบาท</label><input type="text" id="c-role" value="${esc(c.role)}" placeholder="เช่น ตัวเอก, ตัวร้าย, ตัวประกอบ">
+        </div>
+      </div>
+      <div style="height:8px"></div>
+      <label>ลักษณะนิสัย/รูปลักษณ์</label>
+      <textarea id="c-traits" rows="2">${esc(c.traits)}</textarea>
+      <div style="height:8px"></div>
+      <label>ประวัติ/รายละเอียด</label>
+      <textarea id="c-desc" class="serif" rows="6">${esc(c.description)}</textarea>
+    </div>
+    <div class="card">
+      <h3>ความสัมพันธ์กับตัวละครอื่น</h3>
+      <div id="relList">
+        ${c.relationships.map(r=>`
+          <div class="relrow" data-relid="${r.id}">
+            <select data-rel-target="${r.id}">
+              ${others.map(o=>`<option value="${o.id}" ${o.id===r.targetId?"selected":""}>${esc(o.name)}</option>`).join("")}
+            </select>
+            <select data-rel-kind="${r.id}">
+              <option value="positive" ${r.kind==="positive"?"selected":""}>เชิงบวก</option>
+              <option value="conflict" ${r.kind==="conflict"?"selected":""}>ขัดแย้ง</option>
+            </select>
+            <input type="text" data-rel-type="${r.id}" value="${esc(r.type)}" placeholder="${r.kind==="conflict"?"เช่น เกลียด/ศัตรู/ไม่ชอบ":"เช่น พี่น้อง/คู่รัก/เพื่อน"}">
+            <input type="text" data-rel-note="${r.id}" value="${esc(r.note)}" placeholder="โน้ตเพิ่มเติม">
+            <button class="btn ghost small" data-rel-del="${r.id}">✕</button>
+          </div>`).join("") || `<div class="empty">ยังไม่มีความสัมพันธ์ที่บันทึกไว้</div>`}
+      </div>
+      <button class="btn small" id="addRel" ${others.length?"":"disabled"}>+ เพิ่มความสัมพันธ์</button>
+    </div>
+    <div class="card">
+      <h3>ปมเรื่องที่เกี่ยวข้อง</h3>
+      ${threads.length ? `<div class="list">${threads.map(t=>`<div class="item"><span class="t" data-jump-thread="${t.id}">🧵 ${esc(t.title)}</span><span class="badge ${t.status}">${t.status==="resolved"?"คลี่คลายแล้ว":"ค้าง"}</span></div>`).join("")}</div>` : `<div class="empty">ยังไม่พบปมเรื่องที่เกี่ยวข้อง</div>`}
+    </div>
+    <div class="card">
+      <h3>ฉากที่ปรากฏ (${scenes.length})</h3>
+      ${scenes.length ? `<div class="list">${scenes.map(({ch,sc})=>`<div class="item"><span class="t" data-jump-scene="${ch.id}:${sc.id}">📖 ${esc(ch.title)} — ${esc(sc.title)}</span></div>`).join("")}</div>` : `<div class="empty">ยังไม่ปรากฏในฉากใด</div>`}
+    </div>`;
+
+  document.getElementById("c-image-input").onchange = async (e) => {
+    const file = e.target.files[0]; if (!file) return;
+    try{
+      const up = await uploadFile(file);
+      c.imageUrl = up.url;
+      scheduleSave(); renderCharacterEditor();
+    }catch(err){ alert(`อัปโหลดรูปไม่สำเร็จ (ต้องเชื่อมต่อกับ server): ${err.message}`); }
+  };
+  const removeBtn = document.getElementById("c-image-remove");
+  if (removeBtn) removeBtn.onclick = () => { c.imageUrl = null; scheduleSave(); renderCharacterEditor(); };
+
+  document.getElementById("c-name").oninput = (e) => { c.name = e.target.value; const lbl=document.getElementById("char-label-"+c.id); if(lbl) lbl.textContent = c.name||"(ไม่มีชื่อ)"; scheduleSave(); };
+  document.getElementById("c-role").oninput = (e) => { c.role = e.target.value; scheduleSave(); };
+  document.getElementById("c-traits").oninput = (e) => { c.traits = e.target.value; scheduleSave(); };
+  document.getElementById("c-desc").oninput = (e) => { c.description = e.target.value; scheduleSave(); };
+
+  document.getElementById("addRel").onclick = () => {
+    c.relationships.push({id:uid(), targetId:others[0].id, type:"", note:"", kind:"positive"});
+    scheduleSave(); renderCharacterEditor();
+  };
+  document.querySelectorAll("[data-rel-target]").forEach(el=>el.onchange = (e)=>{ const r=c.relationships.find(x=>x.id===el.dataset.relTarget); r.targetId=e.target.value; scheduleSave(); });
+  document.querySelectorAll("[data-rel-kind]").forEach(el=>el.onchange = (e)=>{ const r=c.relationships.find(x=>x.id===el.dataset.relKind); r.kind=e.target.value; scheduleSave(); renderCharacterEditor(); });
+  document.querySelectorAll("[data-rel-type]").forEach(el=>el.oninput = (e)=>{ const r=c.relationships.find(x=>x.id===el.dataset.relType); r.type=e.target.value; scheduleSave(); });
+  document.querySelectorAll("[data-rel-note]").forEach(el=>el.oninput = (e)=>{ const r=c.relationships.find(x=>x.id===el.dataset.relNote); r.note=e.target.value; scheduleSave(); });
+  document.querySelectorAll("[data-rel-del]").forEach(el=>el.onclick = ()=>{ c.relationships = c.relationships.filter(x=>x.id!==el.dataset.relDel); scheduleSave(); renderCharacterEditor(); });
+
+  document.querySelectorAll("[data-jump-thread]").forEach(el=>el.onclick = () => { sel.threadId = el.dataset.jumpThread; location.hash = "#threads"; });
+  document.querySelectorAll("[data-jump-scene]").forEach(el=>el.onclick = () => { const [chId,scId] = el.dataset.jumpScene.split(":"); sel.chapterId=chId; sel.sceneId=scId; location.hash = "#chapters"; });
+}
+
+/* ---------------- character relationship map ---------------- */
+function buildRelationshipEdges(nodeChars){
+  const idSet = new Set(nodeChars.map(c=>c.id));
+  const edgeMap = new Map();
+  for (const c of nodeChars){
+    for (const r of c.relationships){
+      if (!idSet.has(r.targetId) || r.targetId === c.id) continue;
+      const key = [c.id, r.targetId].sort().join("|");
+      let e = edgeMap.get(key);
+      if (!e){ e = {a:c.id, b:r.targetId, items:[]}; edgeMap.set(key, e); }
+      e.items.push({type:r.type, note:r.note, kind:r.kind});
+    }
+  }
+  return [...edgeMap.values()].map(e=>{
+    const kinds = new Set(e.items.map(i=>i.kind));
+    const kind = kinds.size>1 ? "mixed" : [...kinds][0];
+    const label = e.items.map(i=>i.type).filter(Boolean).join(" / ");
+    return {a:e.a, b:e.b, kind, label};
+  });
+}
+function charNameIn(list, id){ return list.find(c=>c.id===id)?.name || "?"; }
+
+function renderCharacterMap(view){
+  const n = N();
+  const chapters = n.chapters;
+  if (mapScope.mode === "chapter" && !mapScope.chapterId && chapters[0]) mapScope.chapterId = chapters[0].id;
+
+  view.innerHTML = `
+    <div class="card">
+      <div class="row" style="gap:16px;">
+        <label class="row" style="gap:6px;cursor:pointer;"><input type="radio" name="mapmode" id="mapOverview" ${mapScope.mode==="overview"?"checked":""}> ภาพรวมทั้งเรื่อง</label>
+        <label class="row" style="gap:6px;cursor:pointer;"><input type="radio" name="mapmode" id="mapByChapter" ${mapScope.mode==="chapter"?"checked":""}> รายตอน</label>
+        ${mapScope.mode==="chapter" ? `
+          <select id="mapChapterSel" style="max-width:220px;" ${chapters.length?"":"disabled"}>
+            ${chapters.map(c=>`<option value="${c.id}" ${c.id===mapScope.chapterId?"selected":""}>${esc(c.title||"(ไม่มีชื่อบท)")}</option>`).join("") || `<option value="">— ยังไม่มีบท —</option>`}
+          </select>` : ""}
+      </div>
+    </div>
+    <div class="card" id="mapCanvasHolder"></div>
+    <div class="card" id="mapListHolder"></div>`;
+
+  document.getElementById("mapOverview").onchange = () => { mapScope.mode = "overview"; renderCharacterMap(view); };
+  document.getElementById("mapByChapter").onchange = () => {
+    mapScope.mode = "chapter";
+    if (!mapScope.chapterId && chapters[0]) mapScope.chapterId = chapters[0].id;
+    renderCharacterMap(view);
+  };
+  const chapterSel = document.getElementById("mapChapterSel");
+  if (chapterSel) chapterSel.onchange = (e) => { mapScope.chapterId = e.target.value; renderCharacterMap(view); };
+
+  let nodeChars, scopeNote;
+  if (mapScope.mode === "chapter"){
+    const chapter = chapters.find(c=>c.id===mapScope.chapterId);
+    const idsInChapter = new Set();
+    if (chapter) for (const sc of chapter.scenes) for (const cid of sc.characterIds) idsInChapter.add(cid);
+    nodeChars = n.characters.filter(c=>idsInChapter.has(c.id));
+    scopeNote = chapter
+      ? `ตัวละครที่ปรากฏร่วมกันในฉากของตอน "${chapter.title||"(ไม่มีชื่อบท)"}" — ${nodeChars.length} คน · เส้นที่แสดงคือความสัมพันธ์ที่มีอยู่แล้วในภาพรวม ซึ่งเกี่ยวข้องกับตัวละครกลุ่มนี้ (ผลสะสมจะไปรวมอยู่ในภาพรวมทั้งเรื่องเสมอ)`
+      : `ยังไม่มีบทให้เลือก — ไปเพิ่มบทที่แท็บ "บท/ฉาก" ก่อน`;
+  } else {
+    nodeChars = n.characters;
+    scopeNote = `ภาพรวมความสัมพันธ์ทั้งเรื่อง — ${nodeChars.length} คน (สะสมจากทุกตอน)`;
+  }
+
+  const edges = buildRelationshipEdges(nodeChars);
+  document.getElementById("mapCanvasHolder").innerHTML =
+    renderMapSvg(nodeChars, edges) +
+    `<div class="muted" style="margin-top:8px;">${esc(scopeNote)}</div>` +
+    mapLegendHtml();
+  document.getElementById("mapListHolder").innerHTML = renderMapList(nodeChars, edges);
+
+  document.querySelectorAll("[data-map-node]").forEach(el=>el.onclick = () => {
+    sel.characterId = el.dataset.mapNode; charView = "list"; render();
+  });
+}
+
+function mapLegendHtml(){
+  return `<div class="row" style="gap:16px;margin-top:10px;font-size:12px;color:var(--ink-soft);">
+    <span class="row" style="gap:5px;"><svg width="20" height="10"><line x1="0" y1="5" x2="20" y2="5" stroke="var(--ok)" stroke-width="2.5"/></svg> ความสัมพันธ์เชิงบวก</span>
+    <span class="row" style="gap:5px;"><svg width="20" height="10"><line x1="0" y1="5" x2="20" y2="5" stroke="var(--danger)" stroke-width="2.5" stroke-dasharray="6 4"/></svg> ความขัดแย้ง</span>
+  </div>`;
+}
+
+function renderMapSvg(nodeChars, edges){
+  if (!nodeChars.length) return `<div class="empty">ไม่มีตัวละครในขอบเขตนี้</div>`;
+  const size = 560;
+  const cx = size/2, cy = size/2;
+  const r = nodeChars.length <= 1 ? 0 : Math.min(230, Math.max(110, 30*nodeChars.length));
+  const nodeR = nodeChars.length > 12 ? 20 : 26;
+  const pos = new Map();
+  nodeChars.forEach((c,i)=>{
+    const angle = (i/nodeChars.length) * Math.PI*2 - Math.PI/2;
+    pos.set(c.id, { x: cx + r*Math.cos(angle), y: cy + r*Math.sin(angle) });
+  });
+
+  const edgeSvg = edges.map(e=>{
+    const p1 = pos.get(e.a), p2 = pos.get(e.b);
+    if (!p1 || !p2) return "";
+    const midX = (p1.x+p2.x)/2, midY = (p1.y+p2.y)/2;
+    const stroke = e.kind==="conflict" ? "var(--danger)" : (e.kind==="mixed" ? "var(--warn)" : "var(--ok)");
+    const dash = e.kind==="conflict" ? `stroke-dasharray="6 4"` : (e.kind==="mixed" ? `stroke-dasharray="2 3"` : "");
+    const labelW = Math.min(150, Math.max(24, e.label.length*7.2));
+    return `
+      <line x1="${p1.x}" y1="${p1.y}" x2="${p2.x}" y2="${p2.y}" stroke="${stroke}" stroke-width="2" ${dash} opacity="0.85"/>
+      ${e.label ? `<rect x="${midX-labelW/2}" y="${midY-9}" width="${labelW}" height="16" fill="var(--panel)" opacity="0.92" rx="4"/>
+      <text x="${midX}" y="${midY+3}" text-anchor="middle" font-size="10.5" fill="${stroke}">${esc(e.label)}</text>` : ""}
+    `;
+  }).join("");
+
+  const nodeSvg = nodeChars.map(c=>{
+    const p = pos.get(c.id);
+    const initial = esc((c.name||"?").trim().slice(0,1) || "?");
+    const clipId = "clip-"+c.id;
+    return `
+      <g data-map-node="${c.id}" style="cursor:pointer;">
+        ${c.imageUrl ? `
+          <clipPath id="${clipId}"><circle cx="${p.x}" cy="${p.y}" r="${nodeR}"/></clipPath>
+          <image href="${c.imageUrl}" x="${p.x-nodeR}" y="${p.y-nodeR}" width="${nodeR*2}" height="${nodeR*2}" preserveAspectRatio="xMidYMid slice" clip-path="url(#${clipId})"/>
+          <circle cx="${p.x}" cy="${p.y}" r="${nodeR}" fill="none" stroke="var(--line)" stroke-width="2"/>
+        ` : `
+          <circle cx="${p.x}" cy="${p.y}" r="${nodeR}" fill="var(--chip)" stroke="var(--line)" stroke-width="2"/>
+          <text x="${p.x}" y="${p.y+6}" text-anchor="middle" font-size="18" fill="var(--ink)">${initial}</text>
+        `}
+        <text x="${p.x}" y="${p.y+nodeR+16}" text-anchor="middle" font-size="11.5" fill="var(--ink)" font-weight="600">${esc((c.name||"?").slice(0,12))}</text>
+      </g>`;
+  }).join("");
+
+  return `<div style="overflow-x:auto;"><svg viewBox="0 0 ${size} ${size}" width="100%" style="max-width:520px;display:block;margin:0 auto;min-width:300px;">
+    ${edgeSvg}
+    ${nodeSvg}
+  </svg></div>`;
+}
+
+function renderMapList(nodeChars, edges){
+  if (!nodeChars.length) return "";
+  if (!edges.length) return `<div class="empty">ยังไม่มีความสัมพันธ์ที่บันทึกไว้ระหว่างตัวละครกลุ่มนี้ — เพิ่มได้ที่หน้ารายชื่อตัวละคร</div>`;
+  return `<h3>รายการความสัมพันธ์ (${edges.length})</h3><div class="list">${edges.map(e=>{
+    const a = charNameIn(nodeChars, e.a), b = charNameIn(nodeChars, e.b);
+    const badgeClass = e.kind==="conflict" ? "low" : (e.kind==="mixed" ? "open" : "resolved");
+    const kindLabel = e.kind==="conflict" ? "ขัดแย้ง" : (e.kind==="mixed" ? "ผสม" : "เชิงบวก");
+    return `<div class="item"><span class="t">${esc(a)} ↔ ${esc(b)}${e.label?` — ${esc(e.label)}`:""}</span><span class="badge ${badgeClass}">${kindLabel}</span></div>`;
+  }).join("")}</div>`;
+}
+
+/* ---------------- threads ---------------- */
+function renderThreads(view){
+  const n = N();
+  if (!sel.threadId && n.threads[0]) sel.threadId = n.threads[0].id;
+  view.innerHTML = `
+    <div class="two-col">
+      <div class="card">
+        <div class="row" style="justify-content:space-between;margin-bottom:6px;">
+          <h3 style="margin:0;">ปมเรื่อง</h3>
+          <button class="btn small" id="addThread">+ เพิ่ม</button>
+        </div>
+        <div class="list">
+          ${n.threads.map(t=>`
+            <div class="item ${t.id===sel.threadId?"active":""}">
+              <span class="t" data-th="${t.id}" id="th-label-${t.id}">${esc(t.title||"(ไม่มีชื่อ)")}</span>
+              <button class="btn ghost small" data-delth="${t.id}">✕</button>
+            </div>`).join("") || `<div class="empty">ยังไม่มีปมเรื่อง</div>`}
+        </div>
+      </div>
+      <div id="threadEditor"></div>
+    </div>`;
+
+  document.getElementById("addThread").onclick = () => {
+    const t = {id:uid(), title:"ปมใหม่", description:"", status:"open", characterIds:[]};
+    n.threads.push(t); sel.threadId = t.id; scheduleSave(); renderThreads(view);
+  };
+  document.querySelectorAll("[data-th]").forEach(el=>el.onclick = () => { sel.threadId = el.dataset.th; renderThreadEditor(); document.querySelectorAll(".list .item").forEach(i=>i.classList.remove("active")); el.closest(".item").classList.add("active"); });
+  document.querySelectorAll("[data-delth]").forEach(el=>el.onclick = () => {
+    if (!confirm("ลบปมเรื่องนี้?")) return;
+    const id = el.dataset.delth;
+    n.threads = n.threads.filter(t=>t.id!==id);
+    for (const {sc} of allScenes()) sc.threadIds = sc.threadIds.filter(i=>i!==id);
+    if (sel.threadId===id) sel.threadId = n.threads[0]?.id || null;
+    scheduleSave(); renderThreads(view);
+  });
+  renderThreadEditor();
+}
+function renderThreadEditor(){
+  const holder = document.getElementById("threadEditor");
+  if (!holder) return;
+  const n = N();
+  const t = n.threads.find(x=>x.id===sel.threadId);
+  if (!t){ holder.innerHTML = `<div class="card empty">เลือกหรือเพิ่มปมเรื่อง</div>`; return; }
+  const scenes = scenesWithThread(t.id);
+
+  holder.innerHTML = `
+    <div class="card">
+      <div class="row">
+        <div class="col grow"><label>ชื่อปมเรื่อง</label><input type="text" id="t-title" value="${esc(t.title)}"></div>
+        <div class="col">
+          <label>สถานะ</label>
+          <select id="t-status">
+            <option value="open" ${t.status==="open"?"selected":""}>ค้างอยู่</option>
+            <option value="resolved" ${t.status==="resolved"?"selected":""}>คลี่คลายแล้ว</option>
+          </select>
+        </div>
+      </div>
+      <div style="height:8px"></div>
+      <label>รายละเอียด</label>
+      <textarea id="t-desc" class="serif" rows="6">${esc(t.description)}</textarea>
+    </div>
+    <div class="card">
+      <label>ตัวละครที่เกี่ยวข้อง</label>
+      <div id="t-chars">
+        ${n.characters.length ? n.characters.map(c=>`<button class="chip ${t.characterIds.includes(c.id)?"on":""}" data-toggle-tc="${c.id}">${esc(c.name)}</button>`).join("") : `<div class="empty">ยังไม่มีตัวละคร</div>`}
+      </div>
+    </div>
+    <div class="card">
+      <h3>ฉากที่เกี่ยวข้อง (${scenes.length})</h3>
+      ${scenes.length ? `<div class="list">${scenes.map(({ch,sc})=>`<div class="item"><span class="t" data-jump-scene2="${ch.id}:${sc.id}">📖 ${esc(ch.title)} — ${esc(sc.title)}</span></div>`).join("")}</div>` : `<div class="empty">ยังไม่มีฉากที่แท็กปมนี้ — ไปที่บท/ฉาก เพื่อแท็ก</div>`}
+    </div>`;
+
+  document.getElementById("t-title").oninput = (e) => { t.title = e.target.value; const lbl=document.getElementById("th-label-"+t.id); if(lbl) lbl.textContent = t.title||"(ไม่มีชื่อ)"; scheduleSave(); };
+  document.getElementById("t-status").onchange = (e) => { t.status = e.target.value; scheduleSave(); };
+  document.getElementById("t-desc").oninput = (e) => { t.description = e.target.value; scheduleSave(); };
+  document.querySelectorAll("[data-toggle-tc]").forEach(el=>el.onclick = () => {
+    const id = el.dataset.toggleTc;
+    const i = t.characterIds.indexOf(id);
+    if (i>=0) t.characterIds.splice(i,1); else t.characterIds.push(id);
+    el.classList.toggle("on"); scheduleSave();
+  });
+  document.querySelectorAll("[data-jump-scene2]").forEach(el=>el.onclick = () => { const [chId,scId] = el.dataset.jumpScene2.split(":"); sel.chapterId=chId; sel.sceneId=scId; location.hash = "#chapters"; });
+}
+
+/* ---------------- locations ---------------- */
+function renderLocations(view){
+  const n = N();
+  if (!sel.locationId && n.locations[0]) sel.locationId = n.locations[0].id;
+  const l = n.locations.find(x=>x.id===sel.locationId) || null;
+  const scenesHere = l ? allScenes().filter(({sc})=>sc.locationId===l.id) : [];
+
+  view.innerHTML = `
+    <div class="two-col">
+      <div class="card">
+        <div class="row" style="justify-content:space-between;margin-bottom:6px;">
+          <h3 style="margin:0;">สถานที่</h3>
+          <button class="btn small" id="addLoc">+ เพิ่ม</button>
+        </div>
+        <div class="list">
+          ${n.locations.map(x=>`
+            <div class="item ${x.id===sel.locationId?"active":""}">
+              <span class="t" data-loc="${x.id}" id="loc-label-${x.id}">${esc(x.name||"(ไม่มีชื่อ)")}</span>
+              <button class="btn ghost small" data-delloc="${x.id}">✕</button>
+            </div>`).join("") || `<div class="empty">ยังไม่มีสถานที่</div>`}
+        </div>
+      </div>
+      <div>
+        ${l ? `
+        <div class="card">
+          <label>ชื่อสถานที่</label>
+          <input type="text" id="l-name" value="${esc(l.name)}">
+          <div style="height:8px"></div>
+          <label>รายละเอียด</label>
+          <textarea id="l-desc" class="serif" rows="6">${esc(l.description)}</textarea>
+        </div>
+        <div class="card">
+          <h3>ฉากที่เกิดขึ้นที่นี่ (${scenesHere.length})</h3>
+          ${scenesHere.length ? `<div class="list">${scenesHere.map(({ch,sc})=>`<div class="item"><span class="t" data-jump-scene3="${ch.id}:${sc.id}">📖 ${esc(ch.title)} — ${esc(sc.title)}</span></div>`).join("")}</div>` : `<div class="empty">ยังไม่มีฉากที่นี่</div>`}
+        </div>` : `<div class="card empty">เลือกหรือเพิ่มสถานที่</div>`}
+      </div>
+    </div>`;
+
+  document.getElementById("addLoc").onclick = () => {
+    const l2 = {id:uid(), name:"สถานที่ใหม่", description:""};
+    n.locations.push(l2); sel.locationId = l2.id; scheduleSave(); renderLocations(view);
+  };
+  document.querySelectorAll("[data-loc]").forEach(el=>el.onclick = () => { sel.locationId = el.dataset.loc; renderLocations(view); });
+  document.querySelectorAll("[data-delloc]").forEach(el=>el.onclick = () => {
+    if (!confirm("ลบสถานที่นี้?")) return;
+    const id = el.dataset.delloc;
+    n.locations = n.locations.filter(x=>x.id!==id);
+    for (const {sc} of allScenes()) if (sc.locationId===id) sc.locationId = null;
+    if (sel.locationId===id) sel.locationId = n.locations[0]?.id || null;
+    scheduleSave(); renderLocations(view);
+  });
+  if (l){
+    document.getElementById("l-name").oninput = (e) => { l.name = e.target.value; const lbl=document.getElementById("loc-label-"+l.id); if(lbl) lbl.textContent=l.name||"(ไม่มีชื่อ)"; scheduleSave(); };
+    document.getElementById("l-desc").oninput = (e) => { l.description = e.target.value; scheduleSave(); };
+    document.querySelectorAll("[data-jump-scene3]").forEach(el=>el.onclick = () => { const [chId,scId] = el.dataset.jumpScene3.split(":"); sel.chapterId=chId; sel.sceneId=scId; location.hash = "#chapters"; });
+  }
+}
+
+/* ---------------- spell checker (offline, dictionary-based) ---------------- */
+let THAI_WORD_SET = null;
+function getWordSet(){
+  if (!THAI_WORD_SET) THAI_WORD_SET = new Set(THAI_WORDS_RAW.split("\n").filter(Boolean));
+  return THAI_WORD_SET;
+}
+const THAI_RANGE_RE = /[฀-๿]/;
+const THAI_DIGIT_RUN_RE = /^[๐-๙]+$/;
+const SC_MAX_WORD_LEN = 40;
+
+function buildExtraKnownWords(n){
+  const set = new Set();
+  const addName = (s) => { if (!s) return; for (const part of String(s).split(/\s+/)) if (part) set.add(part); };
+  for (const c of n.characters) addName(c.name);
+  for (const l of n.locations) addName(l.name);
+  for (const t of n.threads) addName(t.title);
+  for (const w of (n.customDictionary||[])) if (w) set.add(w);
+  return set;
+}
+
+function segmentThaiRun(run, wordSet, extraKnown){
+  const tokens = [];
+  let i = 0;
+  while (i < run.length){
+    let matchedLen = 0;
+    const maxLen = Math.min(SC_MAX_WORD_LEN, run.length - i);
+    for (let len = maxLen; len >= 1; len--){
+      const cand = run.slice(i, i+len);
+      if (wordSet.has(cand) || extraKnown.has(cand)){ matchedLen = len; break; }
+    }
+    if (matchedLen){
+      tokens.push({text: run.slice(i, i+matchedLen), known:true, start:i, end:i+matchedLen});
+      i += matchedLen;
+    } else {
+      let j = i+1;
+      while (j < run.length){
+        let found = false;
+        const maxLen2 = Math.min(SC_MAX_WORD_LEN, run.length - j);
+        // require length >= 2 here so a stray single-letter valid word (ก็, ณ, ...) sitting
+        // inside a garbled stretch doesn't fragment it into disjoint one-character flags
+        for (let len = maxLen2; len >= 2; len--){
+          if (wordSet.has(run.slice(j, j+len)) || extraKnown.has(run.slice(j, j+len))){ found = true; break; }
+        }
+        if (found) break;
+        j++;
+      }
+      tokens.push({text: run.slice(i, j), known:false, start:i, end:j});
+      i = j;
+    }
+  }
+  return tokens;
+}
+
+function tokenizeForSpellcheck(text, wordSet, extraKnown){
+  const tokens = [];
+  let i = 0;
+  while (i < text.length){
+    const ch = text[i];
+    if (THAI_RANGE_RE.test(ch)){
+      let j = i+1;
+      while (j < text.length && THAI_RANGE_RE.test(text[j])) j++;
+      const run = text.slice(i, j);
+      if (THAI_DIGIT_RUN_RE.test(run)){
+        tokens.push({text: run, known:true, isThai:true, start:i, end:j});
+      } else {
+        for (const t of segmentThaiRun(run, wordSet, extraKnown)){
+          tokens.push({text:t.text, known:t.known, isThai:true, start:i+t.start, end:i+t.end});
+        }
+      }
+      i = j;
+    } else {
+      let j = i+1;
+      while (j < text.length && !THAI_RANGE_RE.test(text[j])) j++;
+      tokens.push({text: text.slice(i,j), known:true, isThai:false, start:i, end:j});
+      i = j;
+    }
+  }
+  return tokens;
+}
+
+function levenshtein(a, b){
+  const m = a.length, n = b.length;
+  const dp = new Array(n+1);
+  for (let j=0;j<=n;j++) dp[j] = j;
+  for (let i=1;i<=m;i++){
+    let prev = dp[0]; dp[0] = i;
+    for (let j=1;j<=n;j++){
+      const tmp = dp[j];
+      dp[j] = a[i-1]===b[j-1] ? prev : 1 + Math.min(prev, dp[j], dp[j-1]);
+      prev = tmp;
+    }
+  }
+  return dp[n];
+}
+function suggestFixes(word, wordSet){
+  const L = word.length;
+  if (L === 0) return [];
+  const maxDist = L <= 3 ? 1 : (L <= 6 ? 2 : 3);
+  const candidates = [];
+  for (const w of wordSet){
+    if (Math.abs(w.length - L) > maxDist) continue;
+    const d = levenshtein(word, w);
+    if (d > 0 && d <= maxDist) candidates.push([w, d]);
+  }
+  candidates.sort((a,b)=> a[1]-b[1] || Math.abs(a[0].length-L)-Math.abs(b[0].length-L));
+  return candidates.slice(0,5).map(x=>x[0]);
+}
+
+function renderSpellChecker(view){
+  const n = N();
+  const wordSet = getWordSet();
+  const extraKnown = buildExtraKnownWords(n);
+  if (!sel.chapterId && n.chapters[0]) sel.chapterId = n.chapters[0].id;
+  const chapter = n.chapters.find(c=>c.id===sel.chapterId) || null;
+
+  const chapterIssueCounts = n.chapters.map(c=>{
+    let count = 0;
+    for (const sc of c.scenes) count += tokenizeForSpellcheck(sc.content, wordSet, extraKnown).filter(t=>t.isThai && !t.known).length;
+    return count;
+  });
+
+  view.innerHTML = `
+    <div class="card">
+      <div class="row" style="justify-content:space-between;">
+        <div class="muted" style="max-width:640px;">
+          ตรวจตัวสะกดคำไทยแบบออฟไลน์ โดยเทียบกับพจนานุกรมคำไทยที่ฝังไว้ในแอป (~61,000 คำ จาก PyThaiNLP)
+          — ตรวจได้เฉพาะ <b>คำที่ไม่ตรงกับรายการคำ</b> เท่านั้น <b>ไม่สามารถตรวจความหมายหรือไวยากรณ์ของประโยคได้</b>
+          ชื่อตัวละคร/สถานที่/ปมเรื่องที่คุณตั้งไว้จะไม่ถูกฟ้องผิดอัตโนมัติ
+        </div>
+        <button class="btn primary" id="scExportDocx">📄 ส่งออกทั้งเรื่องเป็น Word (.docx)</button>
+      </div>
+    </div>
+    <div class="two-col">
+      <div class="card">
+        <h3>บท</h3>
+        <div class="list">
+          ${n.chapters.map((c,i)=>`
+            <div class="item ${c.id===sel.chapterId?"active":""}">
+              <span class="t" data-scch="${c.id}">${i+1}. ${esc(c.title||"(ไม่มีชื่อบท)")}</span>
+              <span class="badge ${chapterIssueCounts[i] ? "low" : "resolved"}">${chapterIssueCounts[i]}</span>
+            </div>`).join("") || `<div class="empty">ยังไม่มีบท — ไปเพิ่มที่แท็บ "บท/ฉาก" ก่อน</div>`}
+        </div>
+      </div>
+      <div id="scContent"></div>
+    </div>`;
+
+  document.getElementById("scExportDocx").onclick = exportNovelDocx;
+  document.querySelectorAll("[data-scch]").forEach(el=>el.onclick = () => { sel.chapterId = el.dataset.scch; renderSpellChecker(view); });
+  renderSpellCheckerChapter(chapter);
+}
+
+function renderSpellCheckerChapter(chapter){
+  const holder = document.getElementById("scContent");
+  if (!holder) return;
+  if (!chapter){ holder.innerHTML = `<div class="card empty">เลือกหรือเพิ่มบทที่แท็บ "บท/ฉาก" ก่อน</div>`; return; }
+  if (!chapter.scenes.length){ holder.innerHTML = `<div class="card empty">บทนี้ยังไม่มีฉาก</div>`; return; }
+
+  const wordSet = getWordSet();
+  const extraKnown = buildExtraKnownWords(N());
+  const perScene = chapter.scenes.map(sc => ({ sc, toks: tokenizeForSpellcheck(sc.content, wordSet, extraKnown) }));
+
+  holder.innerHTML = perScene.map(({sc, toks})=>{
+    const fixedSet = new Set(sc.spellFixedWords||[]);
+    const html = toks.map((t,i)=>{
+      if (!t.isThai) return esc(t.text);
+      if (!t.known) return `<span class="sc-flag" data-sc-idx="${i}">${esc(t.text)}</span>`;
+      if (fixedSet.has(t.text)) return `<span class="sc-fixed">${esc(t.text)}</span>`;
+      return esc(t.text);
+    }).join("");
+    return `<div class="card">
+      <h3 style="margin-bottom:8px;">${esc(sc.title||"(ไม่มีชื่อฉาก)")}</h3>
+      <div class="serif sc-text" data-scene-id="${sc.id}">${sc.content ? html : `<span class="empty">ฉากนี้ยังไม่มีเนื้อหา</span>`}</div>
+    </div>`;
+  }).join("");
+
+  for (const {sc, toks} of perScene){
+    const container = holder.querySelector(`[data-scene-id="${sc.id}"]`);
+    if (!container) continue;
+    container.querySelectorAll("[data-sc-idx]").forEach(el=>{
+      const tok = toks[+el.dataset.scIdx];
+      el.onclick = (ev) => { ev.stopPropagation(); showSpellPopup(el, sc, tok); };
+    });
+  }
+}
+
+function closeSpellPopup(){
+  const pop = document.getElementById("scPopup");
+  if (pop) pop.remove();
+  document.removeEventListener("click", onDocClickForSpellPopup, {capture:true});
+}
+function onDocClickForSpellPopup(e){
+  const pop = document.getElementById("scPopup");
+  if (pop && !pop.contains(e.target)) closeSpellPopup();
+}
+function showSpellPopup(el, sc, tok){
+  closeSpellPopup();
+  const rect = el.getBoundingClientRect();
+  const suggestions = suggestFixes(tok.text, getWordSet());
+  const pop = document.createElement("div");
+  pop.id = "scPopup";
+  pop.innerHTML = `
+    <div style="font-weight:700;margin-bottom:4px;">"${esc(tok.text)}"</div>
+    <div class="muted" style="margin-bottom:8px;">ไม่พบคำนี้ในพจนานุกรมที่ใช้ตรวจ อาจสะกดผิด หรือเป็นคำเฉพาะที่ไม่มีในรายการ</div>
+    ${suggestions.length ? `<div style="margin-bottom:8px;">${suggestions.map(s=>`<button class="sugg" data-fix="${esc(s)}">${esc(s)}</button>`).join("")}</div>` : `<div class="muted" style="margin-bottom:8px;">ไม่พบคำใกล้เคียงในพจนานุกรม</div>`}
+    <div class="row" style="gap:6px;">
+      <button class="btn small" id="scWhitelist">เพิ่มเป็นคำที่ถูกต้อง</button>
+      <button class="btn ghost small" id="scPopupClose">ปิด</button>
+    </div>`;
+  document.body.appendChild(pop);
+
+  const pw = 260, vw = window.innerWidth, vh = window.innerHeight;
+  let left = Math.min(Math.max(10, rect.left), vw - pw - 10);
+  let top = rect.bottom + 6;
+  const ph = pop.offsetHeight;
+  if (top + ph > vh - 10) top = Math.max(10, rect.top - ph - 6);
+  pop.style.left = left + "px";
+  pop.style.top = top + "px";
+
+  pop.querySelectorAll("[data-fix]").forEach(b=>b.onclick = () => applySpellFix(sc, tok, b.dataset.fix));
+  document.getElementById("scWhitelist").onclick = () => whitelistWord(tok.text);
+  document.getElementById("scPopupClose").onclick = closeSpellPopup;
+  setTimeout(()=>document.addEventListener("click", onDocClickForSpellPopup, {capture:true}), 0);
+}
+function applySpellFix(sc, tok, replacement){
+  sc.content = sc.content.slice(0, tok.start) + replacement + sc.content.slice(tok.end);
+  if (!Array.isArray(sc.spellFixedWords)) sc.spellFixedWords = [];
+  if (!sc.spellFixedWords.includes(replacement)) sc.spellFixedWords.push(replacement);
+  closeSpellPopup();
+  scheduleSave();
+  render();
+}
+function whitelistWord(word){
+  const n = N();
+  if (!Array.isArray(n.customDictionary)) n.customDictionary = [];
+  if (!n.customDictionary.includes(word)) n.customDictionary.push(word);
+  closeSpellPopup();
+  scheduleSave();
+  render();
+}
+
+/* ---------------- docx export (A4, TH Sarabun New, 16pt) ---------------- */
+let CRC_TABLE = null;
+function getCrcTable(){
+  if (CRC_TABLE) return CRC_TABLE;
+  const table = new Uint32Array(256);
+  for (let n=0;n<256;n++){
+    let c = n;
+    for (let k=0;k<8;k++) c = (c & 1) ? (0xEDB88320 ^ (c >>> 1)) : (c >>> 1);
+    table[n] = c >>> 0;
+  }
+  CRC_TABLE = table;
+  return table;
+}
+function crc32(bytes){
+  const table = getCrcTable();
+  let crc = 0xFFFFFFFF;
+  for (let i=0;i<bytes.length;i++) crc = table[(crc ^ bytes[i]) & 0xFF] ^ (crc >>> 8);
+  return (crc ^ 0xFFFFFFFF) >>> 0;
+}
+function dosDateTime(date){
+  const time = ((date.getHours() & 0x1F) << 11) | ((date.getMinutes() & 0x3F) << 5) | ((Math.floor(date.getSeconds()/2)) & 0x1F);
+  const day = (((date.getFullYear()-1980) & 0x7F) << 9) | (((date.getMonth()+1) & 0xF) << 5) | (date.getDate() & 0x1F);
+  return {time, day};
+}
+async function writeZip(files){
+  if (!window.CompressionStream) throw new Error("เบราว์เซอร์นี้ไม่รองรับการสร้างไฟล์นี้ กรุณาใช้ Chrome หรือ Edge เวอร์ชันล่าสุด");
+  const encoder = new TextEncoder();
+  const {time, day} = dosDateTime(new Date());
+  const chunks = [];
+  let offset = 0;
+  const central = [];
+
+  for (const f of files){
+    const nameBytes = encoder.encode(f.name);
+    const crc = crc32(f.bytes);
+    const ds = new CompressionStream("deflate-raw");
+    const writer = ds.writable.getWriter();
+    writer.write(f.bytes); writer.close();
+    const compBytes = new Uint8Array(await new Response(ds.readable).arrayBuffer());
+
+    const localHeader = new Uint8Array(30 + nameBytes.length);
+    const lv = new DataView(localHeader.buffer);
+    lv.setUint32(0, 0x04034b50, true);
+    lv.setUint16(4, 20, true);
+    lv.setUint16(6, 0, true);
+    lv.setUint16(8, 8, true);
+    lv.setUint16(10, time, true);
+    lv.setUint16(12, day, true);
+    lv.setUint32(14, crc, true);
+    lv.setUint32(18, compBytes.length, true);
+    lv.setUint32(22, f.bytes.length, true);
+    lv.setUint16(26, nameBytes.length, true);
+    lv.setUint16(28, 0, true);
+    localHeader.set(nameBytes, 30);
+
+    const localOffset = offset;
+    chunks.push(localHeader, compBytes);
+    offset += localHeader.length + compBytes.length;
+    central.push({nameBytes, crc, compSize:compBytes.length, uncompSize:f.bytes.length, localOffset});
+  }
+
+  const cdOffset = offset;
+  let cdSize = 0;
+  for (const c of central){
+    const rec = new Uint8Array(46 + c.nameBytes.length);
+    const v = new DataView(rec.buffer);
+    v.setUint32(0, 0x02014b50, true);
+    v.setUint16(4, 20, true);
+    v.setUint16(6, 20, true);
+    v.setUint16(8, 0, true);
+    v.setUint16(10, 8, true);
+    v.setUint16(12, time, true);
+    v.setUint16(14, day, true);
+    v.setUint32(16, c.crc, true);
+    v.setUint32(20, c.compSize, true);
+    v.setUint32(24, c.uncompSize, true);
+    v.setUint16(28, c.nameBytes.length, true);
+    v.setUint16(30, 0, true);
+    v.setUint16(32, 0, true);
+    v.setUint16(34, 0, true);
+    v.setUint16(36, 0, true);
+    v.setUint32(38, 0, true);
+    v.setUint32(42, c.localOffset, true);
+    rec.set(c.nameBytes, 46);
+    chunks.push(rec);
+    offset += rec.length;
+    cdSize += rec.length;
+  }
+
+  const eocd = new Uint8Array(22);
+  const ev = new DataView(eocd.buffer);
+  ev.setUint32(0, 0x06054b50, true);
+  ev.setUint16(8, central.length, true);
+  ev.setUint16(10, central.length, true);
+  ev.setUint32(12, cdSize, true);
+  ev.setUint32(16, cdOffset, true);
+  chunks.push(eocd);
+
+  const totalLen = chunks.reduce((s,c)=>s+c.length, 0);
+  const out = new Uint8Array(totalLen);
+  let p = 0;
+  for (const c of chunks){ out.set(c, p); p += c.length; }
+  return out;
+}
+
+function docxEsc(s){ return String(s??"").replace(/[&<>]/g, c=>({"&":"&amp;","<":"&lt;",">":"&gt;"}[c])); }
+function docxPara(text, opts={}){
+  const FONT = "TH Sarabun New";
+  const sz = opts.sz || 32;
+  const bold = opts.bold ? "<w:b/><w:bCs/>" : "";
+  const align = opts.align ? `<w:jc w:val="${opts.align}"/>` : "";
+  const rPr = `<w:rFonts w:ascii="${FONT}" w:hAnsi="${FONT}" w:cs="${FONT}"/><w:sz w:val="${sz}"/><w:szCs w:val="${sz}"/>${bold}`;
+  return `<w:p><w:pPr>${align}<w:rPr>${rPr}</w:rPr></w:pPr><w:r><w:rPr>${rPr}</w:rPr><w:t xml:space="preserve">${docxEsc(text)}</w:t></w:r></w:p>`;
+}
+function docxParaBlock(text, opts={}){
+  const lines = String(text??"").split("\n");
+  return lines.map(line => docxPara(line, opts)).join("");
+}
+function buildDocxXml(n){
+  const A4_W = 11906, A4_H = 16838, MARGIN = 1440;
+  let body = "";
+  body += docxPara(n.title || "นิยายเรื่องใหม่", {bold:true, align:"center", sz:36});
+  body += docxPara("", {});
+  if (n.synopsis){ body += docxParaBlock(n.synopsis, {}); body += docxPara("", {}); }
+  for (const ch of n.chapters){
+    body += docxPara(ch.title || "(ไม่มีชื่อบท)", {bold:true, sz:32});
+    body += docxPara("", {});
+    for (const sc of ch.scenes){
+      if (sc.title) body += docxPara(sc.title, {bold:true});
+      body += docxParaBlock(sc.content || "", {});
+      body += docxPara("", {});
+    }
+  }
+  return `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"><w:body>${body}<w:sectPr><w:pgSz w:w="${A4_W}" w:h="${A4_H}"/><w:pgMar w:top="${MARGIN}" w:right="${MARGIN}" w:bottom="${MARGIN}" w:left="${MARGIN}" w:header="720" w:footer="720" w:gutter="0"/></w:sectPr></w:body></w:document>`;
+}
+async function exportNovelDocx(){
+  const n = N();
+  if (!n) return;
+  const enc = new TextEncoder();
+  const contentTypes = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Override PartName="/word/document.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml"/></Types>`;
+  const rels = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="word/document.xml"/></Relationships>`;
+  const xml = buildDocxXml(n);
+
+  try{
+    const zipBytes = await writeZip([
+      {name:"[Content_Types].xml", bytes: enc.encode(contentTypes)},
+      {name:"_rels/.rels", bytes: enc.encode(rels)},
+      {name:"word/document.xml", bytes: enc.encode(xml)},
+    ]);
+    const blob = new Blob([zipBytes], {type:"application/vnd.openxmlformats-officedocument.wordprocessingml.document"});
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = `${(n.title||"novel").replace(/[\\/:*?"<>|]/g,"_")}.docx`;
+    a.click();
+    URL.revokeObjectURL(a.href);
+  }catch(e){
+    alert("ส่งออกไฟล์ไม่สำเร็จ: " + e.message);
+  }
+}
+
+/* ---------------- boot ---------------- */
+window.addEventListener("hashchange", () => { route = location.hash.slice(1) || "library"; render(); });
+
+(async function init(){
+  await loadData();
+  render();
+  setInterval(async ()=>{ // periodically re-check server reachability without clobbering edits
+    if (document.activeElement && ["INPUT","TEXTAREA"].includes(document.activeElement.tagName)) return;
+  }, 4000);
+})();
+</script>
